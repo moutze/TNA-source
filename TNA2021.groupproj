@@ -1,0 +1,36 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{7FBCFB7D-B825-4E81-A311-F48098ED1B4A}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="TNA2021.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="TNA2021">
+        <MSBuild Projects="TNA2021.dproj"/>
+    </Target>
+    <Target Name="TNA2021:Clean">
+        <MSBuild Projects="TNA2021.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TNA2021:Make">
+        <MSBuild Projects="TNA2021.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="TNA2021"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="TNA2021:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="TNA2021:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

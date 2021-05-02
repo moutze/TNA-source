@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<TgConfig Version="3" SubLevelDisabled="False">
+  <Option Name="namespaceFolder.HTMLSection" Type="System.String" Value="HTMLSection" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.TNA2021" Type="System.String" Value="TNA2021" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.FMA" Type="System.String" Value="FMA" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.Entity" Type="System.String" Value="Entity" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.List" Type="System.String" Value="List" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.RUProc" Type="System.String" Value="RUProc" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.Valid" Type="System.String" Value="Valid" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.Docums" Type="System.String" Value="Docums" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.TAH" Type="System.String" Value="TAH" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.TAHAlphaPage" Type="System.String" Value="TAHAlphaPage" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.Stat" Type="System.String" Value="Stat" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.TAHUtilities" Type="System.String" Value="TAHUtilities" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.TA98List" Type="System.String" Value="TA98List" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.Definitions" Type="System.String" Value="Definitions" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.ESProc" Type="System.String" Value="ESProc" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.LAProc" Type="System.String" Value="LAProc" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.Notes" Type="System.String" Value="Notes" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.TAHPage" Type="System.String" Value="TAHPage" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.ITProc" Type="System.String" Value="ITProc" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.ENProc" Type="System.String" Value="ENProc" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.FRProc" Type="System.String" Value="FRProc" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.Term" Type="System.String" Value="Term" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.SingleTerms" Type="System.String" Value="SingleTerms" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.TAHParam" Type="System.String" Value="TAHParam" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.TAHBrowser" Type="System.String" Value="TAHBrowser" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.AccessXml" Type="System.String" Value="AccessXml" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.TAHInterface" Type="System.String" Value="TAHInterface" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.BiProps" Type="System.String" Value="BiProps" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.Tetra" Type="System.String" Value="Tetra" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.WList" Type="System.String" Value="WList" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.TAHDev" Type="System.String" Value="TAHDev" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.TAInOut" Type="System.String" Value="TAInOut" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.Comments" Type="System.String" Value="" Category="General" IsBrowsable="False" />
+</TgConfig>
