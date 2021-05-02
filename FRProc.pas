@@ -9,7 +9,7 @@
   of a dictionary.</p>
   For testing purpose, rules, exceptions and check data are made available and
   are uniquely defined in the present package.</P>
-
+  
   Specifications for anatomical French:
   - French has two genders for nouns and adjectives.
   - Genitive is built with a preposition, without declension, similar to the
