@@ -354,7 +354,7 @@ type
   end;
 
                              //
-  tDeclensionSection         = class(tBiColSection)
+  tDeclensionSection         = class( tBiColSection )
   public
     procedure                Build; override;
   end;
@@ -2509,7 +2509,7 @@ begin
         AnItem := tBiColItem.Create;
         AnItem.SrcLabel := cGntorImg + cSpace + TAH.GetLabel( reGenerator );
         AnItem.AltLabel := TAH.GetLabel( buGenerator );
-        AnItem.Value := puGeneratorText[ DisLang ];
+        AnItem.Value := puGeneratorText[ en ];
         AnItem.Bubble := cEmpty;
         AnItem.Indent := 'a';
         AnItem.Color := lt_None;
@@ -2563,9 +2563,9 @@ begin
       if ( IsInc ) then
       begin
         AnItem := tBiColItem.Create;
-        AnItem.SrcLabel := cIncstImg + cSpace + puIncst[ DisLang ];
+        AnItem.SrcLabel := cIncstImg + cSpace + puIncst[ en ];
         AnItem.AltLabel := cEmpty;
-        AnItem.Value := puIncstText[ DisLang ];
+        AnItem.Value := puIncstText[ en ];
         AnItem.Bubble := cEmpty;
         AnItem.Indent := 'a';
         AnItem.Color := lt_None;
@@ -2576,9 +2576,9 @@ begin
       if ( IsDim ) then
       begin
         AnItem := tBiColItem.Create;
-        AnItem.SrcLabel := cDimorImg + cSpace + puDim[ DisLang ];
+        AnItem.SrcLabel := cDimorImg + cSpace + puDim[ en ];
         AnItem.AltLabel := cEmpty;
-        AnItem.Value := puDimText[ DisLang ];
+        AnItem.Value := puDimText[ en ];
         AnItem.Bubble := cEmpty;
         AnItem.Indent := 'a';
         AnItem.Color := lt_None;
@@ -2591,13 +2591,13 @@ begin
         AnItem := TBiColItem.Create;
         if ( IsMal) then
         begin
-          AnItem.SrcLabel := cMSymbImg + cSpace + puMSymb[ DisLang ];
-          AnItem.Value := puMSymbText[ DisLang ];
+          AnItem.SrcLabel := cMSymbImg + cSpace + puMSymb[ en ];
+          AnItem.Value := puMSymbText[ en ];
         end else
         if ( IsFem) then
         begin
-          AnItem.SrcLabel := cFSymbImg + cSpace + puFSymb[ DisLang ];
-          AnItem.Value := puFSymbText[ DisLang ];
+          AnItem.SrcLabel := cFSymbImg + cSpace + puFSymb[ en ];
+          AnItem.Value := puFSymbText[ en ];
         end;
         AnItem.AltLabel := cEmpty;
         AnItem.Bubble := cEmpty;
@@ -2610,9 +2610,9 @@ begin
       if ( IsRef ) then
       begin
         AnItem := tBiColItem.Create;
-        AnItem.SrcLabel := cReferImg + cSpace + puImmat[ DisLang ];
+        AnItem.SrcLabel := cReferImg + cSpace + puImmat[ en ];
         AnItem.AltLabel := cEmpty;
-        AnItem.Value := puImmatText[ DisLang ];
+        AnItem.Value := puImmatText[ en ];
         AnItem.Bubble := cEmpty;
         AnItem.Indent := 'a';
         AnItem.Color := lt_None;
@@ -2642,7 +2642,7 @@ begin
       AnItem.AltLabel := TAH.GetLabel( buDimension );
       if ( IsNon ) then
       begin
-        AnItem.Value := puNonPhText[ DisLang ];
+        AnItem.Value := puNonPhText[ en ];
         AnItem.Bubble := cEmpty;
       end else
       begin
@@ -3167,8 +3167,8 @@ begin
     if ( MyValue <> cEmpty ) then
     begin
       AnItem := tBiColItem.Create;
-      AnItem.SrcLabel := ltOfficialLA[ DisLang ];
-      AnItem.AltLabel := bbOfficialLA[ DisLang ];
+      AnItem.SrcLabel := ltOfficialLA[ en ];
+      AnItem.AltLabel := bbOfficialLA[ en ];
       AnItem.Value := MyValue;
       AnItem.Bubble := cEmpty;
       AnItem.Indent := cBaseIndent;
@@ -3184,8 +3184,8 @@ begin
       if ( MyValue <> cEmpty ) then
       begin
         AnItem := tBiColItem.Create;
-        AnItem.SrcLabel := ltOfficialLA[ DisLang ];
-        AnItem.AltLabel := bbOfficialLA[ DisLang ];
+        AnItem.SrcLabel := ltOfficialLA[ en ];
+        AnItem.AltLabel := bbOfficialLA[ en ];
         AnItem.Value := MyValue;
         AnItem.Bubble := cEmpty;
         AnItem.Indent := cBaseIndent;
@@ -3202,8 +3202,8 @@ begin
       if ( MyValue <> cEmpty ) then
       begin
         AnItem := tBiColItem.Create;
-        AnItem.SrcLabel := ltOfficialLA[ DisLang ];
-        AnItem.AltLabel := bbOfficialLA[ DisLang ];
+        AnItem.SrcLabel := ltOfficialLA[ en ];
+        AnItem.AltLabel := bbOfficialLA[ en ];
         AnItem.Value := MyValue;
         AnItem.Bubble := cEmpty;
         AnItem.Indent := cBaseIndent;
@@ -3241,8 +3241,8 @@ begin
                    FMACode + AETAG;
         MyValue := FMACode + cSpace + MyValue;
         AnItem.Value := MyValue;
-        AnItem.SrcLabel := ltFMA[ DisLang ];
-        AnItem.AltLabel := bbFMA[ DisLang ];
+        AnItem.SrcLabel := ltFMA[ en ];
+        AnItem.AltLabel := bbFMA[ en ];
         AnItem.Indent := cBaseIndent;
         AnItem.Color := MyLang;
         AddItem( AnItem );
@@ -3296,8 +3296,8 @@ begin
     if ( MyValue <> cEmpty ) then
     begin
       AnItem := tBiColItem.Create;
-      AnItem.SrcLabel := ltInitialLA[ DisLang ];
-      AnItem.AltLabel := bbInitialLA[ DisLang ];
+      AnItem.SrcLabel := ltInitialLA[ en ];
+      AnItem.AltLabel := bbInitialLA[ en ];
       AnItem.Value := MyValue;
       AnItem.Indent := cBaseIndent;
       AnItem.Color := MyLang;
@@ -3318,8 +3318,8 @@ begin
         begin
           Inc( Count );
           AnItem := tBiColItem.Create;
-          AnItem.SrcLabel := ltAlternateLA[ DisLang ];
-          AnItem.AltLabel := bbAlternateLA[ DisLang ];
+          AnItem.SrcLabel := ltAlternateLA[ en ];
+          AnItem.AltLabel := bbAlternateLA[ en ];
           AnItem.Value := ALATerm.Mandat;
           AnItem.Indent := cBaseIndent;
           AnItem.Color := MyLang;
@@ -3358,8 +3358,8 @@ begin
           if ( IsExpLA ) then
           begin
             AnItem := tBiColItem.Create;
-            AnItem.SrcLabel := ltExpSynonymLA[ DisLang ];
-            AnItem.AltLabel := bbExpSynonymLA[ DisLang ];
+            AnItem.SrcLabel := ltExpSynonymLA[ en ];
+            AnItem.AltLabel := bbExpSynonymLA[ en ];
             AnItem.Value := ALATerm.Mandat + ALATerm.Option;
             AnItem.Indent := cBaseIndent;
             AnItem.Color := MyLang;
@@ -3376,8 +3376,8 @@ begin
     if ( ALATerm <> nil ) then
     begin
       AnItem := tBiColItem.Create;
-      AnItem.SrcLabel := ltBasleLA[ DisLang ];
-      AnItem.AltLabel := bbBasleLA[ DisLang ];
+      AnItem.SrcLabel := ltBasleLA[ en ];
+      AnItem.AltLabel := bbBasleLA[ en ];
       AnItem.Value := ALATerm.Libelle;
       AnItem.Indent := cBaseIndent;
       AnItem.Color := MyLang;
@@ -5143,57 +5143,57 @@ begin
             // TA98 note text
             if ( MyNoteType = nt_TA98 ) then
             begin
-              AnItem.SrcLabel := paNote98[ DisLang ];
-              AnItem.AltLabel := bbTA98Note[ DisLang ];
+              AnItem.SrcLabel := paNote98[ en ];
+              AnItem.AltLabel := bbTA98Note[ en ];
             end else
 
             // TA98 error note
             if ( MyNoteType = nt_Error ) then
             begin
-              AnItem.SrcLabel := paNoteEr[ DisLang ];
-              AnItem.AltLabel := bbErrorNote[ DisLang ];
+              AnItem.SrcLabel := paNoteEr[ en ];
+              AnItem.AltLabel := bbErrorNote[ en ];
             end else
 
             // Past RevTermA note
             if ( MyNoteType = nt_RevTermA ) then
             begin
-              AnItem.SrcLabel := paNote10[ DisLang ];
-              AnItem.AltLabel := bbRevisionNote[ DisLang ];
+              AnItem.SrcLabel := paNote10[ en ];
+              AnItem.AltLabel := bbRevisionNote[ en ];
             end else
 
             // Problem note
             if ( MyNoteType = nt_Problem ) then
             begin
-              AnItem.SrcLabel := paNoteProb[ DisLang ];
-              AnItem.AltLabel := bbProblemNote[ DisLang ];
+              AnItem.SrcLabel := paNoteProb[ en ];
+              AnItem.AltLabel := bbProblemNote[ en ];
             end else
 
             // RevTermA note
             if ( MyNoteType = nt_Revision ) then
             begin
-              AnItem.SrcLabel := paNoteRv[ DisLang ];
-              AnItem.AltLabel := bbRvNote[ DisLang ];
+              AnItem.SrcLabel := paNoteRv[ en ];
+              AnItem.AltLabel := bbRvNote[ en ];
             end else
 
             // Taxonomy note
             if ( MyNoteType = nt_Taxonomy ) then
             begin
-              AnItem.SrcLabel := paNoteTx[ DisLang ];
-              AnItem.AltLabel := bbTxNote[ DisLang ];
+              AnItem.SrcLabel := paNoteTx[ en ];
+              AnItem.AltLabel := bbTxNote[ en ];
             end else
 
             // Implementation note
             if ( MyNoteType = nt_Implement ) then
             begin
-              AnItem.SrcLabel := paNoteImpl[ DisLang ];
-              AnItem.AltLabel := bbImplNote[ DisLang ];
+              AnItem.SrcLabel := paNoteImpl[ en ];
+              AnItem.AltLabel := bbImplNote[ en ];
             end else
 
             // Terminology note
             if ( MyNoteType = nt_Terminology ) then
             begin
-              AnItem.SrcLabel := paNoteTn[ DisLang ];
-              AnItem.AltLabel := bbTnNote[ DisLang ];
+              AnItem.SrcLabel := paNoteTn[ en ];
+              AnItem.AltLabel := bbTnNote[ en ];
             end;
 
             // End of new item
@@ -5234,8 +5234,8 @@ begin
 
             // Store the note
             AnItem := TBiColItem.Create;
-            AnItem.SrcLabel := paNoteSc[ DisLang ];
-            AnItem.AltLabel := bbScNote[ DisLang ];
+            AnItem.SrcLabel := paNoteSc[ en ];
+            AnItem.AltLabel := bbScNote[ en ];
             AnItem.Value := Value;
             AnItem.Bubble := Bubble;
             AddItem( AnItem );
@@ -5245,8 +5245,8 @@ begin
           if ( MyNoteType = nt_Implement ) then
           begin
             AnItem := TBiColItem.Create;
-            AnItem.SrcLabel := paNoteImpl[ DisLang ];
-            AnItem.AltLabel := bbImplNote[ DisLang ];
+            AnItem.SrcLabel := paNoteImpl[ en ];
+            AnItem.AltLabel := bbImplNote[ en ];
             Value := MyNote[ Indx ].Txt;
             Value := MakeHyperlinks( Value, TAH.DisLanguage, False );
             AnItem.Value := Value;
@@ -5258,8 +5258,8 @@ begin
           if ( MyNoteType = nt_Translation ) then
           begin
             AnItem := TBiColItem.Create;
-            AnItem.SrcLabel := paNoteTra[ DisLang ];
-            AnItem.AltLabel := bbTraNote[ DisLang ];
+            AnItem.SrcLabel := paNoteTra[ en ];
+            AnItem.AltLabel := bbTraNote[ en ];
             Value := MyNote[ Indx ].Txt;
             Value := MakeHyperlinks( Value, TAH.DisLanguage, False );
             AnItem.Value := Value;
@@ -5391,7 +5391,7 @@ begin
           AnItem.SrcLabel := TAH.GetLabel( reDefTaxonomic );
           AnItem.AltLabel := TAH.GetLabel( buDefTaxonomic );
           AnItem.Value := Def.MakeTaxDefinition( Indx, True );
-          Bubble := bbTaxDef[ DisLang ];
+          Bubble := bbTaxDef[ en ];
           AnItem.Bubble := Bubble;
           AddItem( AnItem );
         end;
@@ -5417,7 +5417,7 @@ begin
             AnItem.SrcLabel := TAH.GetLabel( reDefTaxonomic );
             AnItem.AltLabel := TAH.GetLabel( buDefTaxonomic );
             AnItem.Value := Def.MakeTaxDefinition( Indx, True );
-            Bubble := bbTaxDef[ DisLang ];
+            Bubble := bbTaxDef[ en ];
             AnItem.Bubble := Bubble;
             AddItem( AnItem );
           end;
@@ -5455,7 +5455,7 @@ begin
     if ( MyDefType = dt_Encyclopedic ) then
     begin
       AnItem := TBiColItem.Create;
-      AnItem.SrcLabel := paPlainLanguage[ DisLang ];
+      AnItem.SrcLabel := paPlainLanguage[ en ];
       // AnItem.Value := MakeEncDefinition( Indx );  missing method
       AddItem( AnItem );
       Break;
@@ -5511,8 +5511,8 @@ begin
     if ( IsTaxDef ) then
     begin
       AnItem := TBiColItem.Create;
-      AnItem.SrcLabel := paAutoLateral[ DisLang ];
-      AnItem.AltLabel := bbAutoPair[ DisLang ];
+      AnItem.SrcLabel := paAutoLateral[ en ];
+      AnItem.AltLabel := bbAutoPair[ en ];
       AnItem.Value := Def.MakeAutoLateralDef( PosDef, Side );
       AnItem.Bubble := cEmpty;
       AddItem( AnItem );
@@ -5566,8 +5566,8 @@ begin
     if ( IsTaxDef ) then
     begin
       AnItem := TBiColItem.Create;
-      AnItem.SrcLabel := paAutoPair[ DisLang ];
-      AnItem.AltLabel := bbAutoPair[ DisLang ];
+      AnItem.SrcLabel := paAutoPair[ en ];
+      AnItem.AltLabel := bbAutoPair[ en ];
       AnItem.Value := Def.MakeAutoPairDef( PosDef );
       AnItem.Bubble := cEmpty;
       AddItem( AnItem );
@@ -5602,8 +5602,8 @@ begin
     if ( NbDef >= 2 ) then
     begin
       AnItem := TBiColItem.Create;
-      AnItem.SrcLabel := paAutoSet[ DisLang ];
-      AnItem.AltLabel := bbAutoPair[ DisLang ];
+      AnItem.SrcLabel := paAutoSet[ en ];
+      AnItem.AltLabel := bbAutoPair[ en ];
       AnItem.Value := Def.MakeAutoSetDef( 1 );
       AnItem.Bubble := cEmpty;
       AddItem( AnItem );
@@ -5638,8 +5638,8 @@ begin // to be developed)
     if ( NbDef >= 1 ) then
     begin
       AnItem := TBiColItem.Create;
-      AnItem.SrcLabel := paAutoSet[ DisLang ];
-      AnItem.AltLabel := bbAutoPair[ DisLang ];
+      AnItem.SrcLabel := paAutoSet[ en ];
+      AnItem.AltLabel := bbAutoPair[ en ];
       AnItem.Value := Def.MakeAutoPstDef( 0 );
       AnItem.Bubble := cEmpty;
       AddItem( AnItem );
@@ -6423,15 +6423,15 @@ begin
             begin
               Value := MyEntity.GetLibelle( lb_Official, TAH.MainLang,
                                             st_undef, True );
-              if ( MyType <> li_part4 ) then
+              {if ( MyType <> li_part4 ) then
               begin
                 FullLink :=
                   AOTAG + cHrefEmpty + cRetroDir + LangDir + cTAH +
                   IntToStr( P4 ) + cSpace + cTypeListPage[ li_part4 ] +
                   cSpace + cLgShort[ TAH.DisLanguage ] + cPeriod + HtmlExt +
-                  cDQuote + cAnr + cFull[ DisLang ] + AETAG;
+                  cDQuote + cAnr + cFull[ en ] + AETAG;
                 Value := Value + cSpace + FullLink;
-              end;
+              end;}
               AnItem := tBiColItem.Create;
                 AnItem.SrcLabel := TAH.GetLabel( reCurrentLevel );
                 AnItem.AltLabel := TAH.GetLabel( buCurrentLevel );
@@ -6442,10 +6442,12 @@ begin
             end;
           end;
         end;
-      end else
+      end else // partonomic lists
 
       // Links to taxonomy list pages: actual level and levels above
       // ===========================================================
+      if ( MyType in [ li_tax1, li_tax2, li_tax2f,
+                       li_tax3, li_tax3f, li_tax4 ] ) then
       begin
 
         // Search all taxonomic levels
@@ -6485,7 +6487,7 @@ begin
               // Consider the condensed list
               Value := MyEntity.GetLibelle( lb_Official, TAH.MainLang,
                                             st_undef, True );
-              ShortLink := cShort[ DisLang ];
+              ShortLink := TAH.GetLabel( reShort );
               if ( MyType <> li_tax1 ) then
                 ShortLink :=
                   AOTAG + cHrefEmpty + cRetroDir + cList + cSpace +
@@ -6497,7 +6499,7 @@ begin
               Value := Value + cSpace + ShortLink;
 
               // Consider the full list
-              FullLink := cFull[ DisLang ];
+              FullLink := TAH.GetLabel( reFull );
               if ( MyType <> li_tax1f ) then
                 FullLink :=
                   AOTAG + cHrefEmpty + cRetroDir + cList + cSpace +
@@ -6510,8 +6512,8 @@ begin
 
               // Store the line
               AnItem := tBiColItem.Create;
-              AnItem.SrcLabel := cTopLevel[ DisLang ];
-              AnItem.AltLabel := bbTopLevel[ DisLang ];
+              AnItem.SrcLabel := TAH.GetLabel( reTopLevel );
+              AnItem.AltLabel := TAH.GetLabel( buTopLevel );
               AnItem.Value := Value;
               AnItem.Bubble := cEmpty;
               AnItem.PartLink := cEmpty;
@@ -6532,7 +6534,7 @@ begin
                 // Consider the condensed list
                 Value := MyEntity.GetLibelle( lb_Official, TAH.MainLang,
                                               st_undef, True );
-                ShortLink := cShort[ DisLang ];
+                ShortLink := TAH.GetLabel( reShort );
                 if ( MyType <> li_tax2 ) then
                   ShortLink :=
                     AOTAG + cHrefEmpty + cRetroDir + cList + cSpace +
@@ -6544,7 +6546,7 @@ begin
                 Value := Value + cSpace + ShortLink;
 
                 // Consider the full list
-                FullLink := cFull[ DisLang ];
+                FullLink := TAH.GetLabel( reFull );
                 if ( MyType <> li_tax2f ) then
                   FullLink :=
                     AOTAG + cHrefEmpty + cRetroDir + cList + cSpace +
@@ -6559,8 +6561,8 @@ begin
 
             // Create and store the Partonomy List line
             AnItem := tBiColItem.Create;
-            AnItem.SrcLabel := cLevel2[ DisLang ];
-            AnItem.AltLabel := bbLevel2[ DisLang ];
+            AnItem.SrcLabel := TAH.GetLabel( reLevel2 );
+            AnItem.AltLabel := TAH.GetLabel( buLevel2 );
             AnItem.Value := Value;
             AnItem.Bubble := cEmpty;
             AnItem.PartLink := cEmpty;
@@ -6631,7 +6633,7 @@ begin
             begin
               Value := MyEntity.GetLibelle( lb_Official, TAH.MainLang,
                                             st_undef, True );
-              if ( MyType <> li_tax4 ) then
+              {if ( MyType <> li_tax4 ) then
               begin
                 FullLink :=
                   AOTAG + cHrefEmpty + cRetroDir + cList +
@@ -6639,9 +6641,9 @@ begin
                   IntToStr( T4 ) + cSpace + cTax +
                   cTypeListPage[ li_tax4 ] +
                   cSpace + cLgShort[ TAH.DisLanguage ] + cPeriod + HtmlExt +
-                  cDQuote + cAnr + cFull[ DisLang ] + AETAG;
+                  cDQuote + cAnr + cFull[ en ] + AETAG;
                 Value := Value + cSpace + FullLink;
-              end;
+              end; }
               AnItem := tBiColItem.Create;
                 AnItem.SrcLabel := TAH.GetLabel( reCurrentLevel );
                 AnItem.AltLabel := TAH.GetLabel( buCurrentLevel );
@@ -6652,7 +6654,7 @@ begin
             end;
           end;
         end;
-      end;
+      end; // taxonomic lists
 
       // Links to alternate language versions
       // ====================================
@@ -7199,8 +7201,8 @@ begin
           MyVoc := cEmpty;
           if ( ARef <> nil ) then
             MyVoc := ARef.Mandat;
-          Source := paRefNoun[ DisLang ];
-          Bubble := baRefNoun[ DisLang ];
+          Source := paRefNoun[ en ];
+          Bubble := baRefNoun[ en ];
           if ( ARef <> nil ) then
           begin
             Libelle := cTAH + IntToStr( MyLnk ) + cSpace + Explicit + cSpace +
@@ -7220,8 +7222,8 @@ begin
           MyVoc := cEmpty;
           if ( ARef <> nil ) then
             MyVoc := ARef.Mandat;
-          Source := paRefCompl[ DisLang ];
-          Bubble := baRefCompl[ DisLang ];
+          Source := paRefCompl[ en ];
+          Bubble := baRefCompl[ en ];
           if ( ARef <> nil ) then
           begin
             Libelle := cTAH + IntToStr( MyLnk ) + cSpace +
@@ -7248,8 +7250,8 @@ begin
                       cEntity + cSpace + cLgShort[ Lang ] + cPeriod +
                       HtmlExt + cDQuote + cAnr;
           IsPrefix := False;
-          Source := paRefAdj[ DisLang ];
-          Bubble := baRefAdj[ DisLang ];
+          Source := paRefAdj[ en ];
+          Bubble := baRefAdj[ en ];
         end else
 
         // 4. Treatment of proximity by a prefix
@@ -7451,8 +7453,8 @@ begin
 
           // Prepare the basic contribution
           AnItem := tBiColItem.Create;
-          AnItem.SrcLabel := paAdjExpansion[ DisLang ];
-          AnItem.AltLabel := baBasicPart[ DisLang ];
+          AnItem.SrcLabel := paAdjExpansion[ en ];
+          AnItem.AltLabel := baBasicPart[ en ];
           AnItem.Value := Value;
           AnItem.Url := Linktext;
           AnItem.Color := lt_Latin;
@@ -7490,7 +7492,7 @@ begin
             // Prepare the prefix contribution
             AnItem := tBiColItem.Create;
             AnItem.SrcLabel := 'Referenced prefix';
-            AnItem.AltLabel := baBasicPart[ DisLang ];
+            AnItem.AltLabel := baBasicPart[ en ];
             AnItem.Value := Value;
             AnItem.Url := Linktext;
             AnItem.Color := lt_Latin;
@@ -7514,7 +7516,7 @@ begin
           // Prepare the adjective contribution
           AnItem := tBiColItem.Create;
           AnItem.SrcLabel := 'Referenced adjective';
-          AnItem.AltLabel := baBasicPart[ DisLang ];
+          AnItem.AltLabel := baBasicPart[ en ];
           AnItem.Value := Value;
           AnItem.Url := Linktext;
           AnItem.Color := lt_Latin;
@@ -7677,7 +7679,7 @@ begin
               end;
             sc_TestNoExp:
               begin
-                TID := cNoChExpLA[ Indx, nu_sin ];
+                TID := cNoChExpLA[ Indx, nu_plu ];
                 if ( TID = 0 ) then
                 begin
                   Dec( NbTest );
@@ -7687,7 +7689,6 @@ begin
                 CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Official,
                                                 Lang, st_for, True, False );
                 CheckGender[ Indx, va_2 ] := IntToStr( TID );
-                TID := cNoChExpLA[ Indx, nu_plu ];
                 Actual := TAH.GetEntityByTID( TID );
                 CheckGender[ Indx, va_1 ] := TAH.GetTextValue( TID, False,
                                              lt_Latin );
@@ -7695,7 +7696,7 @@ begin
               end;
             sc_TestAdjExp:
               begin
-                TID := cAdjChExpLA[ Indx, nu_sin ];
+                TID := cAdjChExpLA[ Indx, nu_plu ];
                 if ( TID = 0 ) then
                 begin
                   Dec( NbTest );
@@ -7703,33 +7704,37 @@ begin
                 end;
                 Actual := TAH.GetEntityByTID( TID );
                 CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Official,
-                                                Lang, st_for, True, False );
+                                                Lang, st_for, False, False );
                 CheckGender[ Indx, va_2 ] := IntToStr( TID );
-                TID := cAdjChExpLA[ Indx, nu_plu ];
                 Actual := TAH.GetEntityByTID( TID );
                 CheckGender[ Indx, va_1 ] := TAH.GetTextValue( TID, False,
                                              lt_Latin );
+                TID := TID;
               end;
             sc_TestMandExp:
               begin
-                TID := cMandChExpLA[ Indx, nu_sin ];
+                TID := cMandChExpLA[ Indx, nu_plu ];
                 if ( TID = 0 ) then
                 begin
                   Dec( NbTest );
                   Continue;
                 end;
                 Actual := TAH.GetEntityByTID( TID );
-                CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Universal,
-                                                Lang, st_for, True, False );
+                if ( TID = 9275 ) then // transitory
+                  CheckGender[ Indx, va_word ] :=
+                    Actual.GetLibelle( lb_Synonym, Lang, st_Ofd, True, False )
+                else
+                  CheckGender[ Indx, va_word ] :=
+                    Actual.GetLibelle( lb_Official, Lang, st_For, True, False );
                 CheckGender[ Indx, va_2 ] := IntToStr( TID );
-                TID := cMandChExpLA[ Indx, nu_plu ];
                 Actual := TAH.GetEntityByTID( TID );
                 CheckGender[ Indx, va_1 ] := TAH.GetTextValue( TID, False,
                                              lt_Latin );
+                TID := TID;
               end;
             sc_TestOptExp:
               begin
-                TID := cMandChExpLA[ Indx, nu_sin ];
+                TID := cOptChExpLA[ Indx, nu_sin ];
                 if ( TID = 0 ) then
                 begin
                   Dec( NbTest );
@@ -7737,12 +7742,13 @@ begin
                 end;
                 Actual := TAH.GetEntityByTID( TID );
                 CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Universal,
-                                                Lang, st_for, True, False );
+                                             lt_Latin, st_for, False, False );
                 CheckGender[ Indx, va_2 ] := IntToStr( TID );
-                TID := cMandChExpLA[ Indx, nu_plu ];
+                TID := cOptChExpLA[ Indx, nu_plu ];
                 Actual := TAH.GetEntityByTID( TID );
                 CheckGender[ Indx, va_1 ] := TAH.GetTextValue( TID, False,
                                              lt_Latin );
+                TID := TID;
               end;
             sc_TestLatExp:
               begin
@@ -7792,12 +7798,16 @@ begin
               end;
             sc_TestAdjExp:
               begin
-                TID := cAdjChExpEN[ Indx, nu_sin ];
+                TID := cAdjChExpEN[ Indx, nu_plu ];
+                if ( TID = 0 ) then
+                begin
+                  Dec( NbTest );
+                  Continue;
+                end;
                 Actual := TAH.GetEntityByTID( TID );
                 CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Official,
                                              lt_English, st_mod, False, False );
                 CheckGender[ Indx, va_2 ] := IntToStr( TID );
-                TID := cAdjChExpEN[ Indx, nu_plu ];
                 Actual := TAH.GetEntityByTID( TID );
                 CheckGender[ Indx, va_1 ] := TAH.GetTextValue( TID, False,
                                              lt_English );
@@ -7830,9 +7840,8 @@ begin
                   Continue;
                 end;
                 Actual := TAH.GetEntityByTID( TID );
-                CheckGender[ Indx, va_word ] :=
-                  Actual.GetLibelle( lb_Official, lt_English, st_for,
-                                     False, False );
+                CheckGender[ Indx, va_word ] := Actual.GetLibelle
+                  ( lb_Official, lt_English, st_for, False, False );
                 CheckGender[ Indx, va_2 ] := IntToStr( TID );
                 TID := cOptChExpEN[ Indx, nu_plu ];
                 Actual := TAH.GetEntityByTID( TID );
@@ -7994,6 +8003,41 @@ begin
                   cAdjChPluralRU[ Indx, nu_sin ];
                 CheckGender[ Indx, va_1 ] :=
                   cAdjChPluralRU[ Indx, nu_plu ];
+              end;
+            sc_TestNoExp:
+              begin
+                TID := cNoChExpRU[ Indx, nu_plu ];
+                if ( TID = 0 ) then
+                begin
+                  Dec( NbTest );
+                  Continue;
+                end;
+                Actual := TAH.GetEntityByTID( TID );
+                CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Official,
+                                             lt_Russian, st_mod, True, False );
+                Actual := TAH.GetEntityByTID( TID );
+                CheckGender[ Indx, va_1 ] := TAH.GetTextValue( TID, False,
+                                             lt_Russian );
+                CheckGender[ Indx, va_2 ] := IntToStr( TID );
+                TID := TID;
+              end;
+            sc_TestAdjExp:
+              begin
+                TID := cAdjChExpRU[ Indx, nu_sin ];
+                if ( TID = 0 ) then
+                begin
+                  Dec( NbTest );
+                  Continue;
+                end;
+                Actual := TAH.GetEntityByTID( TID );
+                CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Official,
+                                             lt_Russian, st_for, True, False );
+                CheckGender[ Indx, va_2 ] := IntToStr( TID );
+                TID := cAdjChExpRU[ Indx, nu_plu ];
+                Actual := TAH.GetEntityByTID( TID );
+                CheckGender[ Indx, va_1 ] := TAH.GetTextValue( TID, False,
+                                             lt_Russian );
+                TID := TID;
               end;
           end; // case on all section types for Russian
         end;
@@ -8294,6 +8338,33 @@ begin
               begin
                 MyResultFem := TestAdjPluralRU( MyMasc, IsRule, IdentFem );
                 IsGoodFem := MyFem = MyResultFem;
+              end;
+            sc_TestAdjExp, sc_TestNoExp:
+              begin
+                IsGoodFem := MyMasc = MyFem;
+                if ( IsGoodFem ) then
+                  MyResultFem := 'OK' + cColumn + MyMasc
+                else
+                  MyResultFem := 'Error' + cColumn + MyFem;
+              end;
+            sc_TestMandExp, sc_TestOptExp:
+              begin
+                IsGoodFem := MyMasc = MyFem;
+                if ( IsGoodFem ) then
+                  MyResultFem := 'OK' + cColumn + MyMasc
+                else
+                  MyResultFem := 'Error' + cColumn + MyFem;
+                MyResultNeu := MyNeu;
+              end;
+            sc_TestLatExp:
+              begin
+                IsGoodFem := MyMasc = MyFem;
+                if ( IsGoodFem ) then
+                  MyResultFem := 'OK' + cColumn + MyMasc
+                else
+                  MyResultFem := 'Error' + cColumn + MyFem;
+                MyResultNeu := MyNeu;
+                IsGoodPlus := MyPlus = MyPlus2;
               end;
           end; // case on all types of section
         end;
@@ -9493,8 +9564,8 @@ begin
     if ( MyTerm = cEmpty ) then
       Exit;
     AnItem := tBiColItem.Create;
-    AnItem.SrcLabel := paOriginTerm[ DisLang ];
-    AnItem.AltLabel := baOriginTerm[ DisLang ];
+    AnItem.SrcLabel := paOriginTerm[ en ];
+    AnItem.AltLabel := baOriginTerm[ en ];
     AnItem.Value := MyTerm;
     AnItem.Indent := cBaseIndent;
     AnItem.Color := lt_Latin;
@@ -9524,8 +9595,8 @@ begin
 
     // Prepare the basic contribution
     AnItem := tBiColItem.Create;
-    AnItem.SrcLabel := paBasicPart[ DisLang ];
-    AnItem.AltLabel := baBasicPart[ DisLang ];
+    AnItem.SrcLabel := paBasicPart[ en ];
+    AnItem.AltLabel := baBasicPart[ en ];
     AnItem.Value := Value;
     AnItem.Url := LinkText;
     AnItem.Color := lt_Latin;
@@ -9590,8 +9661,8 @@ begin
 
         // Prepare the optional contribution
         AnItem := tBiColItem.Create;
-        AnItem.SrcLabel := paOptExpansion[ DisLang ];
-        AnItem.AltLabel := baOptExpansion[ DisLang ];
+        AnItem.SrcLabel := paOptExpansion[ en ];
+        AnItem.AltLabel := baOptExpansion[ en ];
         AnItem.Value := Value;
         AnItem.Color := lt_Latin;
         AnItem.Url := LinkText;
@@ -9626,8 +9697,8 @@ begin
 
     // Display the string formula of the term
     AnItem := tBiColItem.Create;
-    AnItem.SrcLabel := paFormula[ DisLang ];
-    AnItem.AltLabel := baFormula[ DisLang ];
+    AnItem.SrcLabel := paFormula[ en ];
+    AnItem.AltLabel := baFormula[ en ];
     AnItem.Value := Formula;
     AnItem.Bubble := cEmpty;
     AnItem.Url := cEmpty;
@@ -13406,7 +13477,7 @@ begin
                     HtmlExt + cDQuote + cAnr + MyLink + AETAG;
         end;
         MyLang := lt_English;
-        if ( DisLang = fr ) then
+        if ( en = fr ) then
           MyLang := lt_French;
         LinkText := cHrefEmpty + cTAH + IntToStr( AChild.TID ) + cSpace +
                     cEntity + cSpace + cLgShort[ MyLang ] + cPeriod +
@@ -13637,7 +13708,7 @@ begin
         Value := AChild.GetLibelle( lb_Official, TAH.MainLang,
                                     st_undef, True );
         MyLang := lt_English;
-        if ( DisLang = fr ) then
+        if ( en = fr ) then
           MyLang := lt_French;
         LinkText := cHrefEmpty + cTAH + IntToStr( AChild.TID ) + cSpace +
                     PageType + cSpace +
@@ -16921,8 +16992,8 @@ begin
       AnItem.Off4 := cOBold + TAH.GetLabel( reShortTermES ) + cEBold;
       AnItem.Off5 := cOBold + TAH.GetLabel( reShortTermRU ) + cEBold;
     end;
-    AnItem.FBubble := bbShortOFF[ TAH.SubstLang, DisLang ];
-    AnItem.FMALib := bbShortOFF[ TAH.MainLang, DisLang ];
+    AnItem.FBubble := bbShortOFF[ TAH.SubstLang, en ];
+    AnItem.FMALib := bbShortOFF[ TAH.MainLang, en ];
     AddLine( AnItem );
 
     // Build the line for the top entity
@@ -17136,6 +17207,7 @@ var
   IsDup:           Boolean;
   IsOpen:          Boolean;
   DivName:         String;
+  LineText:        String;
   Actual:          tEntity;
   ADisplay:        tEntity;
   AnItem:          tListItem;
@@ -17164,17 +17236,18 @@ begin
       AnItem.ViewUnit := cOBold + cUID + cEBold;
       AnItem.ViewCode := cOBold + cTID + cEBold;
       AnItem.ViewFMA := cOBold + cFMA + cEBold;
-      AnItem.Left := cOBold + cShortOFF[ TAH.MainLang, DisLang ] + cEBold;
-      AnItem.Right := cOBold + cShortOFF[ TAH.SubstLang, DisLang ] + cEBold;
-      AnItem.FBubble := bbShortOFF[ TAH.SubstLang, DisLang ];
-      AnItem.FMALib := bbShortOFF[ TAH.MainLang, DisLang ];
+      AnItem.Left := cOBold + cShortOFF[ TAH.MainLang, en ] + cEBold;
+      AnItem.Right := cOBold + cShortOFF[ TAH.SubstLang, en ] + cEBold;
+      AnItem.FBubble := bbShortOFF[ TAH.SubstLang, en ];
+      AnItem.FMALib := bbShortOFF[ TAH.MainLang, en ];
       AddLine( AnItem );
     end;
 
     // Build the line for the top entity
     ADisplay := TAH.GetTA98EntityByTID( Actual.TID );
     if ( ( Actual.TID <> 13111 ) ) then
-      Self.MakeSingle98Line( ADisplay, 1, cEmpty, DivName, NbDiv, IsOpen, False, True );
+      Self.MakeSingle98Line( ADisplay, 1, cEmpty, DivName, NbDiv, IsOpen,
+      False, True );
 
     // Build all children of the partonomy
     TooMuch := False;
@@ -17190,7 +17263,8 @@ begin
       TotItems := NbLine - 1;
       AnItem := TListItem.Create;
       AnItem.ViewCode := cEmpty;
-      AnItem.Left := IntToStr( TotItems ) + cSpace + cLines[ DisLang ];
+      LineText := TAH.GetLabel( reLines, False );
+      AnItem.Left := IntToStr( TotItems ) + cSpace + LineText;
       AnItem.Right := cEmpty;
       AnItem.Indent := Chr( Ord( cBaseIndent ) + 1 );
       AddLine( AnItem );
@@ -17587,7 +17661,7 @@ begin
     // Prepare indentation
     MyIndent := Chr( Ord( cBaseIndent ) + Level - 1 );
 
-    if ( Actual.TID = 38453 ) then
+    if ( Actual.TID = 30929 ) then
       OriLA := OriLA;
 
     // Prepare the left column term with main language
@@ -17799,7 +17873,7 @@ begin
     if ( ATerm <> nil ) then
       OriLA := ATerm.Mandat;
 
-    if ( Actual.TID = 28615 ) then
+    if ( Actual.TID = 30500 ) then
       OriLA := OriLA;
 
     // Prepare the right column term with substitutiuon language
@@ -18981,6 +19055,7 @@ var
   IsStop:          Boolean;
   IsDup:           Boolean;
   Value:           String;
+  LineText:        String;
   Actual:          tEntity;
   AnItem:          tListItem;
   MyNote:          NoteRec;
@@ -19026,7 +19101,8 @@ begin
     TotItems := NbLine - 1;
     AnItem := tListItem.Create;
     AnItem.ViewCode := cEmpty;
-    AnItem.Left := IntToStr( TotItems ) + cSpace + cLines[ DisLang ];
+    LineText := TAH.GetLabel( reLines, False );
+    AnItem.Left := IntToStr( TotItems ) + cSpace + LineText;
     AnItem.Right := cEmpty;
     AnItem.Indent := Chr( Ord( cBaseIndent ) + 1 );
     AddLine( AnItem );
@@ -19488,7 +19564,7 @@ begin
   if (Self.SectionType = sc_TA98Navigation) then
   begin
     AddTag(TRTAG, Lev + 1);
-    MakeTD(cClassColS, BTAG + fdTA98Code[DisLang] + BETAG, cEmpty, Lev + 2);
+    MakeTD(cClassColS, BTAG + fdTA98Code[ en ] + BETAG, cEmpty, Lev + 2);
     MakeTD(cClassColX, BTAG + 'Link to alternate Trace pages' + BETAG,
       cEmpty, Lev + 2);
     AddTag(TRETAG, Lev + 1);
@@ -19496,7 +19572,7 @@ begin
   else if (Self.SectionType = sc_TA98List) then
   begin
     AddTag(TRTAG, Lev + 1);
-    MakeTD(cClassColS, BTAG + fdTA98Code[DisLang] + BETAG, cEmpty, Lev + 2);
+    MakeTD(cClassColS, BTAG + fdTA98Code[ en ] + BETAG, cEmpty, Lev + 2);
     MakeTD(cClassColX, BTAG + 'TA98 preferred term and synonyms' + BETAG,
       cEmpty, Lev + 2);
     MakeTD(cClassColX, BTAG + 'Type' + BETAG, cEmpty, Lev + 2);
@@ -19667,6 +19743,7 @@ var
   SubChap:         String;
   Chap:            String;
   MyValue:         String;
+  MyShort:         String;
   MyRec:           TA98Rec;
   Current:         tEntity;
   AnItem:          tTA98ListItem;
@@ -19755,9 +19832,10 @@ begin
       // Prepare hyperlink to the section page
       if ( ( TID <> StartTID ) or ( Recurs = md_subchap ) ) then
       begin
+        MyShort := TAH.GetLabel( reFull );
         MyValue := AOTAG + cHrefEmpty + cRetroDir + cTraceTA98 + cSpace +
           cLgShort[ lt_English ] + cSlash + cTAH + IntToStr( Current.Tetra ) +
-          cSpace + cTA98 + cSpace + cLong + cSpace + cLgShort[ lt_English ] +
+          cSpace + cTA98 + cSpace + MyShort + cSpace + cLgShort[ lt_English ] +
           cPeriod + HtmlExt + cDQuote + cAnr + MyValue + AETAG;
       end;
 
@@ -19791,9 +19869,10 @@ begin
       // Prepare hyperlink to the subsection page
       if ( TID <> StartTID ) then
       begin
+        MyShort := TAH.GetLabel( reShort );
         MyValue := AOTAG + cHrefEmpty + cRetroDir + cTraceTA98 + cSpace +
           cLgShort[ lt_English ] + cSlash + cTAH + IntToStr( Current.Tetra ) +
-          cSpace + cTA98 + cSpace + cShort[ DisLang ] + cSpace +
+          cSpace + cTA98 + cSpace + Myshort + cSpace +
           cLgShort[ lt_English ] + cPeriod + HtmlExt + cDQuote + cAnr +
           MyValue + AETAG;
       end;
@@ -21296,6 +21375,11 @@ begin
           sc_TestAdjGender:  NbTest := Length( cAdjChGenderRU );
           sc_TestNounPlural: NbTest := Length( cNounChPluralRU );
           sc_TestAdjPlural:  NbTest := Length( cAdjChPluralRU );
+          sc_TestNoExp:      NbTest := NbNoChExpRU;
+          sc_TestAdjExp:     NbTest := Length( cAdjChExpRU );
+          sc_TestMandExp:    NbTest := NbMandChExpRU;
+          sc_TestLatExp:     NbTest := NbLatChExpRU;
+          sc_TestOptExp:     NbTest := NbOptChExpRU;
         end;
       end;
   end; // case on all languages

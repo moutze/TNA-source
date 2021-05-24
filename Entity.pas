@@ -880,7 +880,7 @@ begin
     begin
       if ( ChildUnit.Material = ma_mat ) then
       begin
-        case ( Self.FTip ) of
+        case ( Self.fTip ) of
           tp_single, tp_leftPair, tp_rightpair, tp_genpset, tp_genPair,
           tp_genset:
             Result := to_Mat;
@@ -900,7 +900,7 @@ begin
       end else
       if ( ChildUnit.Material in [ ma_imm, ma_surf, ma_line, ma_point ] ) then
       begin
-        case ( Self.FTip ) of
+        case ( Self.fTip ) of
           tp_single, tp_genPair, tp_leftPair, tp_rightpair, tp_genpset,
           tp_genset:
             Result := to_Imm;
@@ -1618,8 +1618,8 @@ begin
     MyUnit := TAH.GetUnitByPos( UID );
     if ( MyUnit <> nil ) then
     begin
-      if ( Self.FTip in [ tp_pair, tp_setpset, tp_pset, tp_set, tp_int,
-                          tp_mset ] ) then
+      if ( Self.fTip in [ tp_pair, tp_setpset, tp_pset, tp_set, tp_int,
+                          tp_mset, tp_leftpset, tp_rightpset ] ) then
         Result := MyUnit.Generator;
     end;
     Self.fGen := Result;
@@ -1752,6 +1752,10 @@ begin
         Result := Result + cSpace + '<I>' + Single.Option + '</I>';
     end;
 
+    // Terminate if error
+    if ( Single.ErrNo > 0 ) then
+      Exit;
+
     // Add the bracket part for paired entities or paired sets
     IsPair := ( ( Self.TypeEntity = to_PstMat ) or
                 ( Self.TypeEntity = to_PstImm ) or
@@ -1810,9 +1814,9 @@ begin
     Result := Self.GetSingle( LibType, Lang, SynType );
 end; // _______________________________________________________GetStructuredTerm
 
-function           TEntity.GetVocabulary(
+function           tEntity.GetVocabulary(
   Lang:            tLanguage;
-  SynType:         TSynType )
+  SynType:         tSynType )
   :                String;
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GetVocabulary
   * Retrieve a word of the vocabulary in a specified language *
@@ -1828,7 +1832,7 @@ function           TEntity.GetVocabulary(
 var
   Indx:            Integer;
   NbTerm:          Integer;
-  MyTerm:          TSingle;
+  MyTerm:          tSingle;
 begin
 
   // Check for allowed types
@@ -2433,11 +2437,12 @@ begin
         if ( MyBasic <> cEmpty ) then
         begin
           MySingle := tSingle.Create;
+          MySingle.Category := AType;
+          MySingle.Effective := NewCateg;
           MySingle.Exp := ATerm.Exp;
           MySingle.Obl := ATerm.Obl;
           MySingle.Prefix := ATerm.Prefix;
           MySingle.Adjective := ATerm.Adjective;
-          MySingle.Category := AType;
           MySingle.Libelle := MyBasic;
           MySingle.Done := False;
           MySingle.Language := Lang;
@@ -2588,11 +2593,8 @@ begin
     // Possibly notify an error
     if ( not Self.CurrSingle.Performed ) then
     begin
+      Self.CurrSingle.Mandat := Self.CurrSingle.SetError( ErMissExp );
       Self.CurrSingle.ErrNo := ErMissExp;
-      Self.CurrSingle.ErrChain := Self.CurrSingle.ErrChain + cSemi +
-                                  IntToStr( ErMissExp );
-      Self.CurrSingle.Mandat := Self.CurrSingle.Basic + cSpace +
-                                'ERR' + cSpace + Self.CurrSingle.ErrChain;
     end;
     Exit;
   end;
@@ -2670,10 +2672,12 @@ begin
   if ( AType in cGroupPlural ) then
   begin
 
-    // Handling of set entities only
+    // Check for set entities only
     Single := nil;
-    if ( Self.FTyp = to_SetMat ) or ( Self.FTyp = to_SetImm ) or
-       ( Self.FTyp = to_PstMat ) or ( Self.FTyp = to_PstImm ) then
+    IsGen := False;
+    MyType := Self.TypeEntity;
+    if ( MyType in [ to_SetMat, to_SetImm, to_PstMat, to_PstImm,
+                     to_MstMat, to_MstImm ] ) then
     begin
 
       // Create a new single term
@@ -2683,30 +2687,25 @@ begin
       Single.IsUniversal := IsUniv;
       MyLink := Self.Link;
 
-      // Handling of lateral set
-      if ( ( MyLink = pw_MemberL ) or ( MyLink = pw_MemberR ) or
-           ( MyLink = pw_SMemberL ) or ( MyLink = pw_SMemberR ) or
-           ( MyLink = pw_IMemberL ) or ( MyLink = pw_IMemberR ) or
-           ( MyLink = pw_TMemberL ) or ( MyLink = pw_TMemberR ) ) then
-      begin
-        IsGen := Single.MakePluLateral;
-      end else
-
-      // Handling of main set
-      begin
-        IsGen := Single.MakePluSet;
-      end;
+      // Branch to the generating procedure
+      case Self.TetraTip of
+        tp_setpset,
+        tp_set,
+        tp_mset:      IsGen := Single.MakePluralGeneric;
+        tp_pset:      IsGen := Single.MakePluralSpecific;
+        tp_leftpset,
+        tp_rightpset: IsGen := Single.MakePluralLateral;
+      end; // case on all entity types with sets
     end;
 
     // Return the new term
     if ( IsGen ) then
-    begin
-      Self.AddTerm( Single );
-      Self.CurrSingle := Single;
-    end else
-      Self.CurrSingle := nil;
+      Self.AddTerm( Single )
+    else
+      Single := nil;
+    Self.CurrSingle := Single;
     Exit;
-  end else // End of treatment of st_Plu
+  end else // end of treatment for cGroupPlural
 
 //______________________________________________________________________________
 
@@ -2716,7 +2715,7 @@ begin
   begin
 
     // Create a new single term
-    Single := TSingle.Create( Lang );
+    Single := tSingle.Create( Lang );
     Single.TID := Self.TID;
     Single.Category := st_Dis;
     Single.IsUniversal := IsUniv;
@@ -2802,7 +2801,7 @@ begin
   begin
 
     // Create a new single term
-    Single := TSingle.Create( Lang );
+    Single := tSingle.Create( Lang );
     Single.TID := Self.TID;
     Single.Category := st_Bas;
     Single.IsUniversal := IsUniv;
@@ -2830,7 +2829,7 @@ begin
   begin
 
     // Create a new single term
-    Single := TSingle.Create( Lang );
+    Single := tSingle.Create( Lang );
     Single.TID := Self.TID;
     Single.Category := AType;
     MyLink := Self.Link;
@@ -2904,13 +2903,13 @@ begin
     // Handling of sets
     if ( ( MyType = to_SetMat ) or ( MyType = to_SetImm ) ) then
     begin
-      IsGen := MySingle.MakeFormulaSet( AType );
+      IsGen := MySingle.MakeFormulaGeneric;
     end else
 
     // Handling of psets
     if ( MyType in [ to_PstMat, to_PstImm ] ) then
     begin
-      IsGen := MySingle.MakeFormulaPset;
+      IsGen := MySingle.MakeFormulaSpecific;
     end else
 
     // Handling of symmetrical entities
@@ -2938,7 +2937,7 @@ begin
 end; // ______________________________________________________________SearchTerm
 
 procedure          tEntity.AddTerm(
-  MyTerm:          TSingle );
+  MyTerm:          tSingle );
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ AddTerm
   * Add a term in any language or universal *
   Description:
@@ -2990,7 +2989,7 @@ var
   IsGeneric:       Boolean;
   Children:        String;
   Child:           String;
-  Next:            TEntity;
+  Next:            tEntity;
   MyPos:           Array[ 0 .. 2 ] of Integer;
 begin
   // Get children and their number for taxonomy
@@ -3112,7 +3111,7 @@ begin
   end;
 end; // ___________________________________________________________TermHierarchy
 
-procedure          TEntity.AddPartHierar(
+procedure          tEntity.AddPartHierar(
   TID:             Integer );
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ AddPartHierar
   * Add a new item at last position of the list of partonomic ancestors *
@@ -3126,7 +3125,7 @@ begin
   Self.FPartHierar[ Lgt ] := TID;
 end; // ___________________________________________________________AddPartHierar
 
-procedure          TEntity.GetHierarProperties(
+procedure          tEntity.GetHierarProperties(
   var IsBil:       Boolean;
   var IsMul:       Boolean;
   var IsMat:       Boolean;
@@ -3145,7 +3144,7 @@ procedure          TEntity.GetHierarProperties(
 var
   NbPos:           Integer;
   MyPos:           Array[ 0 .. 2 ] of Integer;
-  MyType:          TType;
+  MyType:          tType;
 begin
   // Bilaterality
   IsBil := Self.IsBilateral();
@@ -3183,7 +3182,7 @@ begin
   IsGtr := NbPos > 0;
 end; // _____________________________________________________GetHierarProperties
 
-procedure          TEntity.GetTaxonomy(
+procedure          tEntity.GetTaxonomy(
   var TaxEntity:   array of TEntity;
   var NbTax:       Integer );
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GetTaxonomy
@@ -3201,7 +3200,7 @@ begin
     Father.GetTaxonomy( TaxEntity, NbTax );
 end; // _____________________________________________________________GetTaxonomy
 
-function           TEntity.GetChildren(
+function           tEntity.GetChildren(
   IsTax:           Boolean )
   :                String;
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GetChildren
@@ -3294,7 +3293,7 @@ begin
   end;
 end; // _____________________________________________________________GetChildren
 
-procedure          TEntity.SetSortedChild(
+procedure          tEntity.SetSortedChild(
   Pos:             Integer;
   Value:           Integer );
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SetSortedChild
@@ -3302,8 +3301,8 @@ procedure          TEntity.SetSortedChild(
   Description:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 begin
-  SetLength( Self.FSortedChildren, Pos + 1 );
-  Self.FSortedChildren[ Pos ] := Value;
+  SetLength( Self.fSortedChildren, Pos + 1 );
+  Self.fSortedChildren[ Pos ] := Value;
 end; // __________________________________________________________SetSortedChild
 
 function           tEntity.IsDeletedTerm(

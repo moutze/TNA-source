@@ -39,6 +39,7 @@ type
     fNbw:                    Integer;            // number of nominative words
     fNum:                    tNumber;            // number of the term !
     fLat:                    String;             // lateral term
+    fOpt:                    Boolean;            // flag for optional expansion
                              // Make the nominative plural form
     function                 MakePlural
                                : String;
@@ -140,6 +141,8 @@ type
     property WordsNom:       Integer read fNbw write fNbw;
                              // Number of the term: singular or plural
     property Number:         tNumber read fNum write fNum;
+                             // Flag for optional expansion
+    property IsOption:       Boolean read fOpt write fOpt;
                              // Standard constructor with initial values
     constructor              Create();
                                overload;
@@ -313,6 +316,7 @@ var
   NoSpace:         Boolean;
   Indx:            Integer;
   MyNom:           String;
+  MyWord:          String;
 begin
   // Reset for all languages
   Self.Side := pw_Undef;
@@ -336,23 +340,26 @@ begin
   begin
     for Indx := 0 to Self.NbWord - 1 do
     begin
+      MyWord := Self.Node[ Indx ].Lem;
+      if ( Self.fLg = lt_Latin ) then   // temporary !!!
+        MyWord := Self.Node[ Indx ].Wrd;
       if ( Self.Node[ Indx ].Lem = cEmpty ) then
       begin
         MyNom := cEmpty;
         Break;
       end;
       if ( Indx = 0 ) then
-        MyNom := Self.Node[ Indx ].Lem
+        MyNom := MyWord
       else
       if ( NoSpace ) then
-        MyNom := MyNom + Self.Node[ Indx ].Lem
+        MyNom := MyNom + MyWord
       else
-        MyNom := MyNom + cSpace + Self.Node[ Indx ].Lem;
+        MyNom := MyNom + cSpace + MyWord;
       if ( Self.Node[ Indx ].Cod <> cEmpty ) then
       begin
         NoSpace := ( Self.Node[ Indx ].Cod[ 1 ] = 'p' );
         NoSpace := ( NoSpace or ( ( Self.Node[ Indx ].Cod[ 1 ] = 'q' ) and
-                                ( Self.Node[ Indx ].Lem = 'd''' ) ) );
+                                ( MyWord = 'd''' ) ) );
       end;
     end; // for on all contributions
     Self.fNom := MyNom;

@@ -1301,28 +1301,46 @@ procedure          tHTMLPage.WriteHeader(
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ WriteHeader
   * Display the page header with title and help icon *
   Description:
-  This method writes the HTML header of a Page.</P>
+  This method writes the HTML header of the page. The following items are the
+  constituant parts of a page header:
+  - an introduction text to the page with language information,
+  - a bubble for introduction text,
+  - a title in main language,
+  - a bubble for title in subsidiary language,
+  - a help icon pointing to the help file of this type of page,
+  - a bubble for help icon.
+  All texts and bubbles but the titles are given in interface language.</P>
   The title font is possibly adjusted when the text is long.</P>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
-  MyHelpFile:      String;
-  MyTitle:         String;
-  MyHelp:          String;
-  MySection:       tSection;
+  Posit:           Integer;  // Enf of text in title
+  MyIntro:         String;   // Introduction text of the page
+  MyIntroBubble:   String;   // Bubble for introduction text of the page
+  MyHelp:          String;   // Icon with link to help file on this page type
+  MyHelpBubble:    String;   // Bubble for help icon
+  MyTitle:         String;   // Visible title of the page in main language
+  MyShort:         String;   // Short title of the page
+  MyTitleBubble:   String;   // Bubble for title in subsidiary language
 begin
-  MyHelpFile := cEmpty;
+  MyIntro := Self.Header.Intro;
+  MyIntroBubble := Self.Header.Legend;
+  MyHelp := cEmpty;
   if ( not IsPub ) then
-    MyHelpFile := AOTAG + cHrefEmpty + Self.HelpDir + Self.HelpFileName +
+    MyHelp := AOTAG + cHrefEmpty + Self.HelpDir + Self.HelpFileName +
                   cDQuote + cAnr + Self.HelpIco + AETAG;
   MyTitle := Self.Header.Title;
-  if ( Length( MyTitle ) > 45 ) then
+  Posit := Pos( cAnl, MyTitle );
+  MyShort := cEmpty;
+  if ( Posit > 0 ) then
+    MyShort := Copy( MyTitle, 1, Posit - 2 );
+  if ( Length( MyShort ) > 45 ) then
     MyTitle := POTAG + cClassSmallFont + cAnr + MyTitle
   else
     MyTitle := PTAG + MyTitle;
-  MySection := tSection.Create;
-  MyHelp := TAH.GetLabel( reHelpOnPage );
-  MakeHeader700( Self.Header.Intro, Self.Header.Legend, MyTitle,
-                 Self.Header.Bubble, MyHelpFile, MyHelp, Lev );
+  MyTitleBubble := Self.Header.Bubble;
+  MyHelpBubble := TAH.GetLabel( reHelpOnPage );
+  MakeHeader700( MyIntro, MyIntroBubble, MyTitle, MyTitleBubble,
+                 MyHelp, MyHelpBubble, Lev );
 end; // _____________________________________________________________WriteHeader
 
 procedure          tHTMLPage.WriteFooter(
@@ -1451,7 +1469,7 @@ begin
   inherited;
 
   // Page type
-  MySection := TSection.Create;
+  MySection := tSection.Create;
   PageType := TAH.GetLabel( reEntityPage );
 
   // Information on applied languages
@@ -1818,8 +1836,8 @@ begin
     sc_Note:
       begin
         MySection := tNoteSection.Create;
-        MySection.SectionTitle := paNote[ DisLang ];
-        MySection.SectionBubble := bbNote[ DisLang ];
+        MySection.SectionTitle := paNote[ en ];
+        MySection.SectionBubble := bbNote[ en ];
       end;
     sc_LightPartonomy:
       begin
@@ -1949,19 +1967,19 @@ begin
     // Prepare selectively the header
     if ( ( Self.Actual.ListPart = cTypeListPage[ li_part4 ] ) and
          ( Self.CategPage = ca_ListPart ) ) then
-      MyHeader := heValidPart4[ DisLang ]
+      MyHeader := heValidPart4[ en ]
     else
     if ( ( Self.Actual.ListTax = cTypeListPage[ li_tax4 ] ) and
          ( Self.CategPage = ca_ListTax ) ) then
-      MyHeader := heValidTax4[ DisLang ]
+      MyHeader := heValidTax4[ en ]
     else
     if ( ( Self.Actual.ListPart = cTypeListPage[ li_part3 ] ) and
          ( Self.CategPage = ca_ListPart ) ) then
-      MyHeader := heValidPart3[ DisLang ]
+      MyHeader := heValidPart3[ en ]
     else
     if ( ( Self.Actual.ListTax = cTypeListPage[ li_tax3 ] ) and
          ( Self.CategPage = ca_ListTax ) ) then
-      MyHeader := heValidTax3[ DisLang ];
+      MyHeader := heValidTax3[ en ];
     Self.Header.Intro := MyHeader + cSpace + Self.Header.Intro;
 end; // ______________________________________________________________MakeHeader
 
@@ -2004,30 +2022,30 @@ begin
   //
   {if ( SType = sc_Navig4 ) then
   begin
-    MyListSection.SectionTitle := paNavig4[ TAH.DisLang ];
-    MyListSection.SectionBubble := bbNavig4[ TAH.DisLang ];
+    MyListSection.SectionTitle := paNavig4[ en ];
+    MyListSection.SectionBubble := bbNavig4[ en ];
     Self.MakeLevel4Section( MyListSection );
   end else
   if ( SType = sc_Navigation ) then
   begin
-    MyListSection.SectionTitle := paNavigation[ TAH.DisLang ];
-    MyListSection.SectionBubble := bbNavigation[ TAH.DisLang ];
+    MyListSection.SectionTitle := paNavigation[ en ];
+    MyListSection.SectionBubble := bbNavigation[ en ];
     Self.MakeNavigationSection( MyListSection );
   end else}
 
   // Validation of vocabulary
   // if ( SType = sc_ValidVocab ) then
   // begin
-  //   MyValidSection.SectionTitle := scValidVocab[ TAH.DisLang ];
-  //   MyValidSection.SectionBubble := bsValidVocab[ TAH.DisLang ];
+  //   MyValidSection.SectionTitle := scValidVocab[ en ];
+  //   MyValidSection.SectionBubble := bsValidVocab[ en ];
   //   tValidVocabSection( MyValidSection ).Build;
   // end;
 
   // Validation section
   if ( SType = sc_ValidTerm ) then
   begin
-    MyValidSection.SectionTitle := scValidPart[ DisLang ];
-    MyValidSection.SectionBubble := bsValidPart[ DisLang ];
+    MyValidSection.SectionTitle := scValidPart[ en ];
+    MyValidSection.SectionBubble := bsValidPart[ en ];
     tValidTermSection( MyValidSection ).Build;
   end;
 
@@ -2422,16 +2440,16 @@ var
 begin
   inherited;
   if ( Self.Single = md_short ) then
-    MyPage := tiTA98ShortPage[ DisLang ]
+    MyPage := tiTA98ShortPage[ en ]
   else
   if ( Self.Single = md_sect ) then
-    MyPage := tiTA98LongPage[ DisLang ]
+    MyPage := tiTA98LongPage[ en ]
   else
   if ( Self.Single = md_subchap ) then
-    MyPage := tiTA98SubPage[ DisLang ]
+    MyPage := tiTA98SubPage[ en ]
   else
   if ( Self.Single = md_chap ) then
-    MyPage := tiTA98ChapPage[ DisLang ];
+    MyPage := tiTA98ChapPage[ en ];
   Self.Header.Intro := MyPage + cSpace + Self.Header.Intro;
 end; // ______________________________________________________________MakeHeader
 
@@ -2457,15 +2475,15 @@ begin
   if ( SType = sc_TA98Navigation ) then
   begin
     Recurs := Self.Single;
-    MySection.SectionTitle := paTA98Navig[ DisLang ];
-    MySection.SectionBubble := bbTA98Navig[ DisLang ];
+    MySection.SectionTitle := paTA98Navig[ en ];
+    MySection.SectionBubble := bbTA98Navig[ en ];
     tTA98NavSection( MySection ).Build;
     Self.AddSection( MySection );
   end;
   if ( SType = sc_TA98List ) then
   begin
-    MySection.SectionTitle := paTA98List[ DisLang ];
-    MySection.SectionBubble := bbTA98List[ DisLang ];
+    MySection.SectionTitle := paTA98List[ en ];
+    MySection.SectionBubble := bbTA98List[ en ];
     Complement := TListSection.Create;
     Complement.SectionType := sc_TA98Notes;
     Complement.SectionTitle := 'TA98 trace notes';
@@ -2645,12 +2663,12 @@ begin
   if ( Self.Level = 4 ) then
   begin
     Self.Header.Intro :=
-      tiL4SegmentPage[ DisLang ] + cSpace + Self.Header.Intro;
+      tiL4SegmentPage[ en ] + cSpace + Self.Header.Intro;
   end else
   if ( Self.Level = 5 ) then
   begin
     Self.Header.Intro :=
-      tiL5SegmentPage[ DisLang ] + cSpace + Self.Header.Intro;
+      tiL5SegmentPage[ en ] + cSpace + Self.Header.Intro;
   end;
 end; // ______________________________________________________________MakeHeader
 
@@ -2680,26 +2698,26 @@ begin
   end else
   if ( SType = sc_Navigation ) then
   begin
-    MySection.SectionTitle := paNavigation[ DisLang ];
-    MySection.SectionBubble := bbNavigation[ DisLang ];
+    MySection.SectionTitle := paNavigation[ en ];
+    MySection.SectionBubble := bbNavigation[ en ];
     Self.MakeNavigationSection( MySection );
   end else
   if ( SType = sc_SegLevel4 ) then
   begin
-    MySection.SectionTitle := paL4[ DisLang ];
-    MySection.SectionBubble := bbL4[ DisLang ];
+    MySection.SectionTitle := paL4[ en ];
+    MySection.SectionBubble := bbL4[ en ];
     Self.MakeL4TetraSection( MySection );
   end else
   if ( SType = sc_SegLevel5Short ) then
   begin
-    MySection.SectionTitle := paL5Short[ DisLang ];
-    MySection.SectionBubble := bbL5Short[ DisLang ];
+    MySection.SectionTitle := paL5Short[ en ];
+    MySection.SectionBubble := bbL5Short[ en ];
     Self.MakeL5TetraSection( MySection );
   end else
   if ( SType = sc_SegLevel5Full ) then
   begin
-    MySection.SectionTitle := paL5Full[ DisLang ];
-    MySection.SectionBubble := bbL5Full[ DisLang ];
+    MySection.SectionTitle := paL5Full[ en ];
+    MySection.SectionBubble := bbL5Full[ en ];
     Self.MakeL5FullSection( MySection );
   end;
 
@@ -3281,9 +3299,9 @@ begin
           // Display the column headers
           AddTag( TABLEOTAG + cClassBodyTable + cAnr, 4 );
             AddTag( TROTAG + cSpace + cClassHeaderColor + cAnr, 5 );
-              MakeTD( cClassColNno, fdSection[ DisLang ], cEmpty, 6 );
-              MakeTD( cClassColNno, fdItem[ DisLang ], cEmpty, 6 );
-              MakeTD( cClassColXXXno, fdValue[ DisLang ], cEmpty, 6 );
+              MakeTD( cClassColNno, fdSection[ en ], cEmpty, 6 );
+              MakeTD( cClassColNno, fdItem[ en ], cEmpty, 6 );
+              MakeTD( cClassColXXXno, fdValue[ en ], cEmpty, 6 );
             AddTag( TRETAG, 5 );
           AddTag( TABLEETAG, 4 );
 
@@ -3815,7 +3833,7 @@ procedure          tDefinPage.MakeHeader;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 begin
   inherited;
-  Self.Header.Intro := tiDefinPage[ DisLang ] + cSpace + Self.Header.Intro;
+  Self.Header.Intro := tiDefinPage[ en ] + cSpace + Self.Header.Intro;
 end; // ______________________________________________________________MakeHeader
 
 procedure          tDefinPage.MakeSection(
@@ -3860,14 +3878,14 @@ begin
   end else}
   if ( SType = sc_PartDefinListe ) then
   begin
-    MySection.SectionTitle := paPartDefList[ DisLang ];
-    MySection.SectionBubble := bbPartDefList[ DisLang ];
+    MySection.SectionTitle := paPartDefList[ en ];
+    MySection.SectionBubble := bbPartDefList[ en ];
     Self.MakeDefListSection( False, MySection );
   end else
   if ( SType = sc_Taxonomy ) then
   begin
-    MySection.SectionTitle := paTaxonomy[ DisLang ];
-    MySection.SectionBubble := bbTaxonomy[ DisLang ];
+    MySection.SectionTitle := paTaxonomy[ en ];
+    MySection.SectionBubble := bbTaxonomy[ en ];
     APage := tEntityPage.Create;
     APage.Actual := Self.Actual;
     FMAChangeStore := FMAChange;
@@ -3877,8 +3895,8 @@ begin
   end else
   if ( SType = sc_TaxDefinListe ) then
   begin
-    MySection.SectionTitle := paTaxDefList[ DisLang ];
-    MySection.SectionBubble := bbTaxDefList[ DisLang ];
+    MySection.SectionTitle := paTaxDefList[ en ];
+    MySection.SectionBubble := bbTaxDefList[ en ];
     Self.MakeDefListSection( True, MySection );
   end;
 
@@ -3937,8 +3955,8 @@ begin
 
         // Affichage du type de définition à gauche
         AnItem := TBiColItem.Create;
-        AnItem.SrcLabel := paEncyclopedic[ DisLang ];
-        AnItem.AltLabel := bbEncyclopedic[ DisLang ];
+        AnItem.SrcLabel := paEncyclopedic[ en ];
+        AnItem.AltLabel := bbEncyclopedic[ en ];
 
         // Recherche de la source
         MySource := MyDef.Src;
@@ -3988,18 +4006,18 @@ begin
       if ( MyDef.typ = dt_Taxonomic ) then
       begin
         AnItem := tBiColItem.Create;
-        AnItem.SrcLabel := paTaxonomicEN[ DisLang ];
-        AnItem.AltLabel := bbTaxonomic[ DisLang ];
+        AnItem.SrcLabel := paTaxonomicEN[ en ];
+        AnItem.AltLabel := bbTaxonomic[ en ];
         AnItem.Value := Def.MakeTaxDefinition( Indx, True );
-        Bubble := bbTaxDef[ DisLang ];
+        Bubble := bbTaxDef[ en ];
         AnItem.Bubble := Bubble;
         MySection.AddItem( AnItem );
 
         AnItem := tBiColItem.Create;
-        AnItem.SrcLabel := paTaxonomicEN[ DisLang ] + cSpace + '(with ref)';
-        AnItem.AltLabel := bbTaxonomic[ DisLang ];
+        AnItem.SrcLabel := paTaxonomicEN[ en ] + cSpace + '(with ref)';
+        AnItem.AltLabel := bbTaxonomic[ en ];
         AnItem.Value := Def.MakeTaxDefinition( Indx, True );
-        Bubble := bbTaxDef[ DisLang ];
+        Bubble := bbTaxDef[ en ];
         AnItem.Bubble := Bubble;
         MySection.AddItem( AnItem );
       end else
@@ -4011,22 +4029,22 @@ begin
         // Spatial or positional definition
         if ( MyDef.typ = dt_Spatial ) then
         begin
-          AnItem.SrcLabel := paSpatial[ DisLang ];
-          AnItem.AltLabel := bbSpatial[ DisLang ];
+          AnItem.SrcLabel := paSpatial[ en ];
+          AnItem.AltLabel := bbSpatial[ en ];
         end else
 
         // Functional definition
         if ( MyDef.typ = dt_Functional ) then
         begin
-          AnItem.SrcLabel := paFunctional[ DisLang ];
-          AnItem.AltLabel := bbFunctional[ DisLang ];
+          AnItem.SrcLabel := paFunctional[ en ];
+          AnItem.AltLabel := bbFunctional[ en ];
         end else
 
         // Physical definition
         if ( MyDef.typ = dt_Physical ) then
         begin
-          AnItem.SrcLabel := paPhysical[ DisLang ];
-          AnItem.AltLabel := bbPhysical[ DisLang ];
+          AnItem.SrcLabel := paPhysical[ en ];
+          AnItem.AltLabel := bbPhysical[ en ];
         end;
         AnItem.Value := MyDef.Def;
         AnItem.Bubble := cEmpty;
@@ -4043,10 +4061,10 @@ begin
       if ( MyDef.typ = dt_Taxonomic ) then
       begin
         AnItem := tBiColItem.Create;
-        AnItem.SrcLabel := paTaxonomicFR[ DisLang ];
-        AnItem.AltLabel := bbTaxonomic[ DisLang ];
+        AnItem.SrcLabel := paTaxonomicFR[ en ];
+        AnItem.AltLabel := bbTaxonomic[ en ];
         AnItem.Value := Def.MakeTaxDefinition( Indx );
-        Bubble := bbTaxDef[ DisLang ];
+        Bubble := bbTaxDef[ en ];
         AnItem.Bubble := Bubble;
         MySection.AddItem( AnItem );
       end
@@ -4528,7 +4546,7 @@ begin
         if ( IsTaxDef ) then
         begin
           Value := Def.MakeAutoPairDef( PosDef );
-          Bubble := bbAutoPair[ DisLang ];
+          Bubble := bbAutoPair[ en ];
         end;
       end else
 
@@ -4553,7 +4571,7 @@ begin
         if ( IsTaxDef ) then
         begin
           Value := Def.MakeAutoSetDef( PosDef );
-          Bubble := bbAutoPair[ DisLang ];
+          Bubble := bbAutoPair[ en ];
         end;
       end else
 
@@ -4578,7 +4596,7 @@ begin
         if ( IsTaxDef ) then
         begin
           Value := Def.MakeAutoPstDef( PosDef );
-          Bubble := bbAutoPair[ DisLang ];
+          Bubble := bbAutoPair[ en ];
         end;
       end;
     end;
@@ -4837,9 +4855,9 @@ begin
           // Display the column headers
           AddTag( TABLEOTAG + cClassBodyTable + cAnr, 4 );
             AddTag( TROTAG + cSpace + cClassHeaderColor + cAnr, 5 );
-              MakeTD( cClassColNno, fdSection[ DisLang ], cEmpty, 6 );
-              MakeTD( cClassColNno, fdItem[ DisLang ], cEmpty, 6 );
-              MakeTD( cClassColXXXno, fdValue[ DisLang ], cEmpty, 6 );
+              MakeTD( cClassColNno, fdSection[ en ], cEmpty, 6 );
+              MakeTD( cClassColNno, fdItem[ en ], cEmpty, 6 );
+              MakeTD( cClassColXXXno, fdValue[ en ], cEmpty, 6 );
             AddTag( TRETAG, 5 );
           AddTag( TABLEETAG, 4 );
 
@@ -4993,9 +5011,9 @@ begin
           // Display the column headers
           AddTag( TABLEOTAG + cClassBodyTable + cAnr, 4 );
             AddTag( TROTAG + cSpace + cClassHeaderColor + cAnr, 5 );
-              MakeTD( cClassColNno, fdSection[ DisLang ], cEmpty, 6 );
-              MakeTD( cClassColNno, fdItem[ DisLang ], cEmpty, 6 );
-              MakeTD( cClassColXXXno, fdValue[ DisLang ], cEmpty, 6 );
+              MakeTD( cClassColNno, fdSection[ en ], cEmpty, 6 );
+              MakeTD( cClassColNno, fdItem[ en ], cEmpty, 6 );
+              MakeTD( cClassColXXXno, fdValue[ en ], cEmpty, 6 );
             AddTag( TRETAG, 5 );
           AddTag( TABLEETAG, 4 );
 
@@ -5089,32 +5107,32 @@ begin
   if ( SType = sc_Definition ) then
   begin
     MySection := tDefSection.Create;
-    MySection.SectionTitle := scDefinition[ DisLang ];
-    MySection.SectionBubble := bsDefinition[ DisLang ];
+    MySection.SectionTitle := scDefinition[ en ];
+    MySection.SectionBubble := bsDefinition[ en ];
   end else
   if ( SType = sc_TermDesign ) then
   begin
     MySection := tTermDesignSection.Create;
-    MySection.SectionTitle := scDesignTerm[ DisLang ];
-    MySection.SectionBubble := bsDesignTerm[ DisLang ];
+    MySection.SectionTitle := scDesignTerm[ en ];
+    MySection.SectionBubble := bsDesignTerm[ en ];
   end else
   if ( SType = sc_Analysis ) then
   begin
     MySection := tWordAnalysisSection.Create;
-    MySection.SectionTitle := scLatinTerm[ DisLang ];
-    MySection.SectionBubble := bsLatinTerm[ DisLang ];
+    MySection.SectionTitle := scLatinTerm[ en ];
+    MySection.SectionBubble := bsLatinTerm[ en ];
   end else
   if ( SType = sc_Syntax ) then
   begin
     MySection := tSyntaxSection.Create;
-    MySection.SectionTitle := scLatinSyntax[ DisLang ];
-    MySection.SectionBubble := bsLatinSyntax[ DisLang ];
+    MySection.SectionTitle := scLatinSyntax[ en ];
+    MySection.SectionBubble := bsLatinSyntax[ en ];
   end else
   if ( SType = sc_Declension ) then
   begin
     MySection := tDeclensionSection.Create;
-    MySection.SectionTitle := scLatinDecl[ DisLang ];
-    MySection.SectionBubble := bsLatinDecl[ DisLang ];
+    MySection.SectionTitle := scLatinDecl[ en ];
+    MySection.SectionBubble := bsLatinDecl[ en ];
   end;
   MySection.SectionType := SType;
   MySection.Entity := Self.Actual;
@@ -5309,7 +5327,7 @@ end; // ______________________________________________________________MakeHeader
 
 procedure          tListPage.MakeSection(
   SType:           tSectionType );
-{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TListPage.MakeSection
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ tListPage.MakeSection
   * Make a section of any type for a List Page *
     ==========================================
   Description:
@@ -5367,8 +5385,8 @@ begin
     // Make the TA98 partonomy list section with a dual section of notes
     if ( SType = sc_Part98 ) then
     begin
-      MySection.SectionTitle := scPart98[ DisLang ];
-      MySection.SectionBubble := bsPart98[ DisLang ];
+      MySection.SectionTitle := scPart98[ en ];
+      MySection.SectionBubble := bsPart98[ en ];
       MyDual := tListSection.Create;
       MyDual.SectionType := sc_NoteList;
       MyDual.SectionTitle := TAH.GetLabel( reSectNote );
@@ -5452,8 +5470,8 @@ begin
     MyBiColSection.Entity := Self.Actual;
     MyBiColSection.PageType := Self.CategPage;
     MyBiColSection.TypeList := Self.TypeList;
-    MyBiColSection.SectionTitle := scStatList[ DisLang ];
-    MyBiColSection.SectionBubble := bsStatList[ DisLang ];
+    MyBiColSection.SectionTitle := scStatList[ en ];
+    MyBiColSection.SectionBubble := bsStatList[ en ];
     MyBiColSection.Build;
   end;
 
@@ -5511,23 +5529,23 @@ begin
     case ( Indx ) of
     1: // Direction terms
       begin
-        MySection.SectionTitle := paDirT[ DisLang ];
-        MySection.SectionBubble := bbDirT[ DisLang ];
+        MySection.SectionTitle := paDirT[ en ];
+        MySection.SectionBubble := bbDirT[ en ];
       end;
     2: // Reference planes
       begin
-        MySection.SectionTitle := paRefP[ DisLang ];
-        MySection.SectionBubble := bbRefP[ DisLang ];
+        MySection.SectionTitle := paRefP[ en ];
+        MySection.SectionBubble := bbRefP[ en ];
       end;
     3: // Reference lines
       begin
-        MySection.SectionTitle := paRefL[ DisLang ];
-        MySection.SectionBubble := bbRefL[ DisLang ];
+        MySection.SectionTitle := paRefL[ en ];
+        MySection.SectionBubble := bbRefL[ en ];
       end;
     4: // Movements of joints
       begin
-        MySection.SectionTitle := paMovJ[ DisLang ];
-        MySection.SectionBubble := bbMovJ[ DisLang ];
+        MySection.SectionTitle := paMovJ[ en ];
+        MySection.SectionBubble := bbMovJ[ en ];
       end;
     end;
     tTaxListSection( MySection ).Build;
@@ -5655,6 +5673,7 @@ var
   ViewCode:        String;
   ViewFMA:         String;
   FMALib:          String;
+  LineText:        String;
   Actual:          TEntity;
   AnItem:          TListItem;
   MyNote:          NoteRec;
@@ -5693,7 +5712,8 @@ begin
     TotItems := MySection.NbLine - 1;
     AnItem := TListItem.Create;
     AnItem.ViewCode := cEmpty;
-    AnItem.Left := IntToStr( TotItems ) + cSpace + cLines[ DisLang ];
+    LineText := TAH.GetLabel( reLines, False );
+    AnItem.Left := IntToStr( TotItems ) + cSpace + LineText;
     AnItem.Right := cEmpty;
     AnItem.Indent := Chr( Ord( cBaseIndent ) + 1 );
     MySection.AddLine( AnItem );
@@ -6176,7 +6196,7 @@ begin
     Self.MakeHeader;
 
     // Build the List navigation section
-    // Self.MakeSection( sc_NavList );
+    Self.MakeSection( sc_NavList );
 
     // Build the universal statistic section
     Self.MakeSection( sc_StatUniv );
@@ -6224,15 +6244,15 @@ begin
   // Make a Universal validation section
   if ( SType = sc_ValidUniv ) then
   begin
-    MySection := TValidUnivSection.Create;
+    MySection := tValidUnivSection.Create;
     MySection.Entity := Self.Actual;
     MySection.SectionType := SType;
-    MySection.SectionTitle := scValidUniv[ DisLang ];
-    MySection.SectionBubble := bsValidUniv[ DisLang ];
-    MyDual := TListSection.Create;
+    MySection.SectionTitle := scValidUniv[ en ];
+    MySection.SectionBubble := bsValidUniv[ en ];
+    MyDual := tListSection.Create;
     MyDual.SectionType := sc_NoteList;
-    MyDual.SectionTitle := scNoteUniv[ DisLang ];
-    MyDual.SectionBubble := bsNoteUniv[ DisLang ];
+    MyDual.SectionTitle := scNoteUniv[ en ];
+    MyDual.SectionBubble := bsNoteUniv[ en ];
     MySection.ComplSection := MyDual;
     MySection.Build;
   end;
@@ -6240,26 +6260,26 @@ begin
   // Make the navigation section
   if ( SType = sc_NavList ) then
   begin
-    MyHTMLSection := TNavListSection.Create;
+    MyHTMLSection := tNavListSection.Create;
     MyHTMLSection.SectionType := SType;
     MyHTMLSection.Entity := Self.Actual;
     MyHTMLSection.PageType := Self.CategPage;
     MyHTMLSection.TypeList := Self.TypeList;
-    MyHTMLSection.SectionTitle := scNavList[ DisLang ];
-    MyHTMLSection.SectionBubble := bsNavList[ DisLang ];
+    MyHTMLSection.SectionTitle := TAH.GetLabel( reSectNavigList, False );
+    MyHTMLSection.SectionBubble := TAH.GetBubble( reSectNavigList, False );
     MyHTMLSection.Build;
   end else
 
   // Make the universal statistic section
   if ( SType = sc_StatUniv ) then
   begin
-    MyHTMLSection := TUnivSection.Create;
+    MyHTMLSection := tUnivSection.Create;
     MyHTMLSection.SectionType := SType;
     MyHTMLSection.Entity := Self.Actual;
     MyHTMLSection.PageType := Self.CategPage;
     MyHTMLSection.TypeList := Self.TypeList;
-    MyHTMLSection.SectionTitle := scStatList[ DisLang ];
-    MyHTMLSection.SectionBubble := bsStatList[ DisLang ];
+    MyHTMLSection.SectionTitle := scStatList[ en ];
+    MyHTMLSection.SectionBubble := bsStatList[ en ];
     MyHTMLSection.Build;
   end;
 
@@ -6345,7 +6365,7 @@ end; // ______________________________________________________tRATPage.WritePage
 
 procedure          tPropertyPage.Build(
   TID:             Integer );
-{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TPropertyPage.Build
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ tPropertyPage.Build
   * Build a Property Page *
   Description:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
@@ -6368,11 +6388,11 @@ begin
     Self.MakeContent( TID, 1, Count );
 
     // Build the footer of page
-    Stat1 := fdEntries[ DisLang ] + cColumn + cSpace + IntToStr( Count );
-    Legend1 := bbNbEntries[ DisLang ];
+    Stat1 := fdEntries[ en ] + cColumn + cSpace + IntToStr( Count );
+    Legend1 := bbNbEntries[ en ];
     Self.MakeFooter( Stat1, cEmpty, cEmpty, Legend1, cEmpty, cEmpty );
   end;
-end; // _____________________________________________________TPropertyPage.Build
+end; // _____________________________________________________tPropertyPage.Build
 
 procedure          tPropertyPage.MakeHeader;
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakeHeader
@@ -6381,7 +6401,7 @@ procedure          tPropertyPage.MakeHeader;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 begin
   inherited;
-  Self.Header.Intro := tiPropertyPage[ DisLang ] + cSpace +
+  Self.Header.Intro := tiPropertyPage[ en ] + cSpace +
                        Self.Header.Intro;
 end; // ______________________________________________________________MakeHeader
 
@@ -6544,7 +6564,7 @@ begin
 end; // ______________________________________________________________MakeFooter
 
 procedure          tPropertyPage.WritePage;
-{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TPropertyPage.WritePage
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ tPropertyPage.WritePage
   * Write the Property Page file *
   Description:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
@@ -6577,25 +6597,25 @@ begin
           // Display the column headers
           AddTag( TABLEOTAG + cClassBodyTable + cAnr, 4 );
             AddTag( TROTAG + cSpace + cClassHeaderColor + cAnr, 5 );
-              MakeTD( cClassColno, fdRefID[ DisLang ], cEmpty, 6 );
+              MakeTD( cClassColno, fdRefID[ en ], cEmpty, 6 );
               AClass := cClassColSSno;
-              MakeTD( AClass, 'B', bbBilatText[ DisLang ], 6 );
-              MakeTD( AClass, 'M', bbMultiText[ DisLang ], 6 );
-              MakeTD( AClass, 'I', bbImmatText[ DisLang ], 6 );
-              MakeTD( AClass, 'N', bbNonPhysText[ DisLang ], 6 );
-              MakeTD( AClass, 'D', bbDimorphicText[ DisLang ], 6 );
-              MakeTD( AClass, 'R', bbReferText[ DisLang ], 6 );
-              MakeTD( AClass, 'M', bbMaleText[ DisLang ], 6 );
-              MakeTD( AClass, 'F', bbFemaleText[ DisLang ], 6 );
-              MakeTD( AClass, 'I', bbInconsText[ DisLang ], 6 );
-              MakeTD( AClass, 'S', bbSpeciText[ DisLang ], 6 );
-              MakeTD( AClass, 'M', bbMaterText[ DisLang ], 6 );
-              MakeTD( AClass, 'G', bbGenerText[ DisLang ], 6 );
-              MakeTD( AClass, 'R', bbInconsText[ DisLang ], 6 );
-              MakeTD( AClass, 'B', bbBilatText[ DisLang ], 6 );
-              MakeTD( cClassColXXXno, fdExpanded[ DisLang ],
-                      fdOfficial[ DisLang ] + cSpace +
-                      fdInBubble[ DisLang ], 6 );
+              MakeTD( AClass, 'B', bbBilatText[ en ], 6 );
+              MakeTD( AClass, 'M', bbMultiText[ en ], 6 );
+              MakeTD( AClass, 'I', bbImmatText[ en ], 6 );
+              MakeTD( AClass, 'N', bbNonPhysText[ en ], 6 );
+              MakeTD( AClass, 'D', bbDimorphicText[ en ], 6 );
+              MakeTD( AClass, 'R', bbReferText[ en ], 6 );
+              MakeTD( AClass, 'M', bbMaleText[ en ], 6 );
+              MakeTD( AClass, 'F', bbFemaleText[ en ], 6 );
+              MakeTD( AClass, 'I', bbInconsText[ en ], 6 );
+              MakeTD( AClass, 'S', bbSpeciText[ en ], 6 );
+              MakeTD( AClass, 'M', bbMaterText[ en ], 6 );
+              MakeTD( AClass, 'G', bbGenerText[ en ], 6 );
+              MakeTD( AClass, 'R', bbInconsText[ en ], 6 );
+              MakeTD( AClass, 'B', bbBilatText[ en ], 6 );
+              MakeTD( cClassColXXXno, fdExpanded[ en ],
+                      fdOfficial[ en ] + cSpace +
+                      fdInBubble[ en ], 6 );
             AddTag( TRETAG, 5 );
           AddTag( TABLEETAG, 4 );
 
@@ -6617,7 +6637,7 @@ begin
 
   // Save page on external file
   Page.SaveToFile( Self.Directory + cSlash + Self.FileName );
-end; // _________________________________________________TPropertyPage.WritePage
+end; // _________________________________________________tPropertyPage.WritePage
 
 procedure          tPropertyPage.WriteLine(
   ALine:           tPropsValue;
@@ -6659,7 +6679,7 @@ begin
     if ( ALine.IsBil ) then
     begin
       MyImage := cBilatImg;
-      Bubble := bbBilatText[ DisLang ];
+      Bubble := bbBilatText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6671,7 +6691,7 @@ begin
     if ( ALine.IsMul ) then
     begin
       MyImage := cMultiImg;
-      Bubble := bbBilatText[ DisLang ];
+      Bubble := bbBilatText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6683,7 +6703,7 @@ begin
     if ( ALine.IsImm ) then
     begin
       MyImage := cImmatImg;
-      Bubble := bbImmatText[ DisLang ];
+      Bubble := bbImmatText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6695,7 +6715,7 @@ begin
     if ( ALine.IsNon ) then
     begin
       MyImage := cNonPhImg;
-      Bubble := bbBilatText[ DisLang ];
+      Bubble := bbBilatText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6707,7 +6727,7 @@ begin
     if ( ALine.IsDim ) then
     begin
       MyImage := cDimorImg;
-      Bubble := bbBilatText[ DisLang ];
+      Bubble := bbBilatText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6719,7 +6739,7 @@ begin
     if ( ALine.IsRef ) then
     begin
       MyImage := cReferImg;
-      Bubble := bbBilatText[ DisLang ];
+      Bubble := bbBilatText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6731,7 +6751,7 @@ begin
     if ( ALine.IsMal ) then
     begin
       MyImage := cMSymbImg;
-      Bubble := bbBilatText[ DisLang ];
+      Bubble := bbBilatText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6743,7 +6763,7 @@ begin
     if ( ALine.IsFem ) then
     begin
       MyImage := cFSymbImg;
-      Bubble := bbBilatText[ DisLang ];
+      Bubble := bbBilatText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6755,7 +6775,7 @@ begin
     if ( ALine.IsInc ) then
     begin
       MyImage := cIncstImg;
-      Bubble := bbBilatText[ DisLang ];
+      Bubble := bbBilatText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6768,7 +6788,7 @@ begin
     if ( ALine.IsSpc ) then
     begin
       MyImage := cSpeciImg;
-      Bubble := bbSpeciText[ DisLang ];
+      Bubble := bbSpeciText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6780,7 +6800,7 @@ begin
     if ( ALine.IsMat ) then
     begin
       MyImage := cMaterImg;
-      Bubble := bbMaterText[ DisLang ];
+      Bubble := bbMaterText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6792,7 +6812,7 @@ begin
     if ( ALine.IsGen ) then
     begin
       MyImage := cGenerImg;
-      Bubble := bbGenerText[ DisLang ];
+      Bubble := bbGenerText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6804,7 +6824,7 @@ begin
     if ( ALine.IsGtr ) then
     begin
       MyImage := cIncstImg;
-      Bubble := bbBilatText[ DisLang ];
+      Bubble := bbBilatText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6816,7 +6836,7 @@ begin
     if ( ALine.IsPar ) then
     begin
       MyImage := cPaireImg;
-      Bubble := bbPaireText[ DisLang ];
+      Bubble := bbPaireText[ en ];
     end else
     begin
       MyImage := cExpndImg;
@@ -6862,7 +6882,7 @@ begin
     MyTest := 0;
     case Self.TypeTest of
       te_NounGender: MyTest := reTestNounGender;
-      te_AdjGender:  MyTest := reTestAdjGender;
+      te_AdjGender: MyTest := reTestAdjGender;
       te_NounPlural:
         begin
           MyHeader.Title := 'Test for plural of nouns';
@@ -6924,6 +6944,7 @@ begin
           MyHeader.Bubble := 'Validation of the optional expansion ' +
                              'from the stored value';
         end;
+      te_AllExpansions: MyTest := reTestAllExp;
     end; // case on all sections
     if ( MyTest > 0 ) then
     begin
@@ -7033,6 +7054,14 @@ begin
         begin
           Self.MakeSection( sc_TestOptExp );
         end;
+      te_AllExpansions:
+        begin
+          Self.MakeSection( sc_TestNoExp );
+          Self.MakeSection( sc_TestAdjExp );
+          Self.MakeSection( sc_TestMandExp );
+          Self.MakeSection( sc_TestLatExp );
+          Self.MakeSection( sc_TestOptExp );
+        end;
     end;
 
     // Prepare the footer
@@ -7047,7 +7076,7 @@ procedure          tTestPage.MakeHeader;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 begin
   inherited;
-  Self.Header.Intro := tiTestPage[ DisLang ] + cSpace +
+  Self.Header.Intro := tiTestPage[ en ] + cSpace +
                        Self.Header.Intro;
 end; // ____________________________________________________tTestPage.MakeHeader
 

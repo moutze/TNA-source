@@ -14,7 +14,7 @@ uses
 
 const
   NbNounRuPluralRU = 23;     // Number of plural rules for nominative nouns
-  NbNounExPluralRU = 5;      // Number of exceptions for plural nouns
+  NbNounExPluralRU = 6;      // Number of exceptions for plural nouns
   NbNounChPluralRU = 3;      // Number of test values for plural nouns
   NbAdjRuPluralRU  = 31;     // Number of plural rules for nominative adjectives
   NbAdjExPluralRU  = 1;      // Number of exceptions for plural adjectives
@@ -32,6 +32,13 @@ const
   NbNounRuGenderRU = 12;     // Number of rules for noun gender
   NbNounExGenderRU = 4;      // Number of exceptions for noun gender
   NbNounChGenderRU = 4;      // Number of tests for noun gender
+
+  NbNoChExpRU      = 12;     // Number of tests without expansion
+  NbAdjChExpRU     = 3;      // Number of tests with adjective expansion
+  NbAdjRuExpRU     = 7;      // Number of rules for adjective expansion
+  NbMandChExpRU    = 5;      // Number of tests with mandatory expansion
+  NbLatChExpRU     = 7;      // Number of tests with lateral expansion
+  NbOptChExpRU     = 1;      // Number of tests with optional expansion
 
                    // Lateral values
   cRUSinister:     Array[ tLatType ] of String = (
@@ -100,6 +107,17 @@ type
                             of String;
   tNounChGenderRU  = Array[ 1 .. NbNounChGenderRU, ge_masculine .. ge_feminine ]
                             of String;
+                   // Tests for terms without expansion
+  tNoChExpRU       = Array[ 1 .. NbNoChExpRU, nu_sin .. nu_plu ] of Integer;
+                   // Tests for adjective expansions
+  tAdjChExpRU      = Array[ 1 .. NbAdjChExpRU, nu_sin .. nu_plu ] of Integer;
+  tAdjRuExpRU      = Array[ 1 .. NbAdjRuExpRU, 1 .. 2 ] of String;
+                   // Tests for mandatory expansions
+  tMandChExpRU     = Array[ 1 .. NbMandChExpRU,  nu_sin .. nu_plu ] of Integer;
+                   // Tests for lateral expansions
+  tLatChExpRU      = Array[ 1 .. NbLatChExpRU, nu_sin .. nu_plu ] of Integer;
+                   // Tests for optional expansions
+  tOptChExpRU      = Array[ 1 .. NbOptChExpRU, nu_sin .. nu_plu ] of Integer;
 
                              // Define the Russian term object
   tRUTerm                    = class( tTerm )
@@ -149,6 +167,18 @@ type
       function               MakeMandatRU(
                                TID: Integer )
                                : String;
+                             // Make the optional expansion of a term
+      function               MakeOptionRU(
+                               MyTerm: tSingle )
+                               : Boolean;
+                             // Add an adjective to a term
+      function               MakeAdjectiveRU(
+                               Adj: String;
+                               Pre: String )
+                               : Boolean;
+                             // Set the base part of a term
+      function               MakeBaseRU
+                               : Boolean;
   end; // class tRUTerm
                              // Translate a single word into Russian
   function                   RussianOf(
@@ -204,11 +234,6 @@ type
                                var IsRule: Boolean;
                                var Ident: Integer )
                                : String;
-                             // Add an adjective to a term
-  procedure                  SetAdjectiveRU(
-                               Adj: String;
-                               Pre: String;
-                               var MySelf: tSingle );
 
 const
                    // Rules for nominative plural nouns
@@ -239,6 +264,7 @@ const
 
                    // Plural exceptions for nominative nouns
   cNounExPluralRU: tNounExPluralRU = (
+                   ( 'веко', 'веки' ),
                    ( 'доктор', 'доктора' ),
                    ( 'щипец', 'щтипцы' ),
                    ( 'палец', 'пальцы' ),
@@ -408,7 +434,7 @@ const
 
                    // Exceptions for gender of adjectives
   cAdjExGenderRU:  tAdjExGenderRU = (
-                   ( 'xx', 'xx', 'xx' ) );
+                   ( 'общий', 'общяя', 'общее' ) );   // общий
 
                    // Tests for gender of adjectives
   cAdjChGenderRU:  tAdjChGenderRU = (
@@ -418,6 +444,74 @@ const
                    ( 'близкий', 'близкaя', 'близкoе' ),             // near
                    ( 'медленный', 'медленнaя', 'медленнoе' ),       // slow
                    ( 'последний', 'последняя', 'последнее' ) );     // last
+
+
+                   // Test of terms without expansion
+  cNoChExpRU:      tNoChExpRU = (
+                   ( 7044, 7044 ),     // общее сухожильное кольцо
+                   ( 7670, 7670 ),     // карликовый ганглиозный нейрон
+                   ( 8129, 8129 ),     // латеральное лицо
+                   ( 5264, 5264 ),     // конечный мозг (generic)
+                   ( 7053, 29947 ),    // веко (generic)
+                   ( 7053, 7053 ),     // веки
+                   ( 6005, 6005 ),     // Угловая извилина
+                   ( 7816, 7816 ),     // подтенториальное ложе
+                   ( 8088, 8088 ),     // костлявый наружный слуховой проход
+                   ( 28553, 28553 ),   // короткое ассоциативное волокно
+                   ( 6274, 6274 ),     // короткие ассоциативные волокна
+                   ( 0, 0 ) );
+
+  cAdjChExpRU:     tAdjChExpRU = (
+                   ( 7101, 7101 ),     // вестибулoулитковый орган
+                   ( 4155, 4155 ),     // локтевая артерия
+                   ( 0, 0 ) );
+
+                   // Test of adjective expansion
+                   // First TID: st_mod; second TID: st_val
+  {cAdjChExpRU:     tAdjChExpRU = (
+                   ( 4155, 4155 ),     // локтевая артерия
+                   ( 33461, 7985 ),    // segments cervicaux de la m. épinière
+                   ( 7986, 7986 ),     // segment cervical 1
+                   ( 6985, 6985 ),     // artériole rétinienne temporale sup.
+                   ( 8415, 8415 ),     // voie hypothalamospinale
+                   ( 5792, 5792 ),     // commissure habénulaire
+                   ( 6281, 6281 ),     // faisceaux occipitaux horizontaux
+                   ( 11830, 11830 ),   // faisceau temporopariétal vertical
+                   ( 10691, 10691 ) ); // quatrième vertèbre cervicale
+  cAdjRuExpRU:     tAdjRuExpRU = (
+                   ( '4155', 'NQ' ),   // локтевая артерия
+                   ( '6281', 'NQA' ),  // faisceau occipital horizontal
+                   ( '11830', 'NOQA' ),// faisceau temporopariétal vertical
+                   ( '7986', 'NQI' ),  // segment cervical 1
+                   ( '9511', 'NQPA' ), // faisceau frontal orbitopolaire
+                   ( '6985', 'NQAA' ), // artériole rétinienne temporale sup.
+                   ( '8415', 'NOQ' ) );// voie hypothalamospinale
+
+                   // Test of mandatory expansion
+  cMandChExpRU:    tMandChExpRU = (
+                   ( 5973, 5973 ),     // извилины большого мозга
+                   ( 6085, 6085 ),     // radiation du corps calleux
+                   ( 12294, 12294 ),   // fas medial ascendant du prosencephalon
+                   ( 5142, 5142 ),     // partie spinale du fil terminal
+                   ( 13172, 13172 ) ); // voie commissurale de l'hippocampe
+
+                   // Test of lateral expansion
+  cLatChExpRU:     tLatChExpRU = (
+                   ( 38488, 38488 ),   // face supérolatérale du lobe frontal
+                                       // gauche
+                   ( 38443, 38443 ),   // lobe temporal droit
+                   ( 28635, 28635 ),   // radiation gauche du corps calleux
+                   ( 28935, 28935 ),   // cellules cholinergiques du bras
+                                       // vertical de la strie diagonale droite
+                   ( 32446, 32446 ),   // voies commissurales de l'hippocampe
+                                       // gauche
+                   ( 28074, 28074 ),   // fibres périventriculaires du thalamus
+                                       // droit
+                   ( 0, 0 ) );
+
+                   // Test of optional expansion
+  cOptChExpRU:     tOptChExpRU = (
+                   ( 7985, 7985 ) );}
 
                    // Binomes Latin-Russian
   cLARUEquiv:      tBinome = (
@@ -469,21 +563,31 @@ var
   MyWord:          String;
   SingVal:         String;
   ATerm:           String;
-  MyType:          TContrib;
-  MyCase:          TCase;
+  MyTerm:          String;
+  MyType:          tContrib;
+  MyCase:          tCase;
   MyNode:          WordAnal;
 begin
 
   // Loop on all words of the term
-  ATerm := Self.Lateral;
+  ATerm := Self.Nominative;
   Plural := cEmpty;
   PosCell := 0;
   AllGen := False;
   IsRule := False;
   Ident := 0;
-  while ( ATerm <> cEmpty ) do
+  while ( ( ATerm <> cEmpty ) and ( Poscell <= Self.NbWord ) ) do
   begin
+    while ( ( Self.Node[ PosCell ].Cod <> cEmpty ) and
+            ( Self.Node[ PosCell ].Cod[ 1 ] = 'p' ) ) do
+      Inc( PosCell );
     MyNode := Self.Node[ PosCell ];
+    if ( ( MyNode.Cod <> cEmpty ) and
+         ( ( MyNode.Cod[ 1 ] = 'h' ) or ( MyNode.Cod[ 1 ] = 's' ) ) ) then
+    begin
+      Inc( PosCell );
+      Continue;
+    end;
     MyCase := CaseOf( MyNode );
     MyType := TypeOf( MyNode );
 
@@ -605,7 +709,18 @@ begin
   end; // while on all words of the term
 
   // Return the plural term (after extraction of an initial blank)
-  Result := Copy( Plural, 2, Length( Plural ) );
+  MyTerm := Copy( Plural, 2, Length( Plural ) );
+  for Indx := 0 to Self.NbWord - 1 do
+  begin
+    if ( Self.Node[ Indx ].Cod = cEmpty ) then
+      Continue;
+    if ( ( Self.Node[ Indx ].Cod[ 1 ] = 'h' ) or
+         ( Self.Node[ Indx ].Cod[ 1 ] = 's' ) ) then
+      Continue;
+    if ( Self.Node[ Indx ].Cod[ 4 ] <> 'n' ) then
+      MyTerm := MyTerm + cSpace + Self.Node[ Indx ].Wrd;
+  end;
+  Result := MyTerm;
 end; // ____________________________________________________________MakePluralRU
 
 function           tRUTerm.GenderRU(
@@ -1300,7 +1415,7 @@ begin
 end; // _________________________________________________________SetNominativeRU
 
 function           tRUTerm.MakeGenderRU(
-  Gender:          TGender;
+  Gender:          tGender;
   AWord:           String;
   var IsRule:      Boolean;
   var Ident:       Integer )
@@ -1807,8 +1922,8 @@ begin
       lx_Noun:
         begin
           LexEntity.Query := tSearch.Create( st_Nou );
-          Shift := 0 - Shift;
-          MyCode := 'nxxxx';
+          Shift := NbContrib - 1 - Indx;
+          MyCode := 'nxxnx';
           IsLastPrefix := False;
         end;
 
@@ -1850,7 +1965,7 @@ begin
       lx_Adj:
         begin
           LexEntity.Query := tSearch.Create( st_Adj );
-          MyCode := 'axxxx';
+          MyCode := 'axxnx';
           Shift := 0;
           if ( IsLastPrefix ) then
           begin
@@ -1907,6 +2022,7 @@ begin
       end; // case on all lexical types
 
       // Search the word and store it at the appropriate position
+      LexEntity.Query.MyLang := lt_Russian;
       LexEntity.SearchTerm;
       MySingle := LexEntity.CurrSingle;
       if ( MySingle <> nil ) then
@@ -2014,6 +2130,7 @@ begin
         if ( MyGender = ge_neuter ) then
         begin
           MyNode.Cod := 'axnns';
+          MyNode.Wrd := MyNode.Lem;
           MyNode.Lem := Self.MakeGenderRU( ge_neuter, MyNode.Lem, IsRule,
                                            Ident );
           Self.Node[ Indx ] := MyNode;
@@ -2235,11 +2352,11 @@ begin
   Result := MyAdj.MakePluralRU( IsRule, Ident );
 end; // _________________________________________________________TestAdjPluralRU
 
-procedure          SetAdjectiveRU(
+function           tRUTerm.MakeAdjectiveRU(
   Adj :            String;
-  Pre:             String;
-  var MySelf:      tSingle );
-{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SetAdjectiveRU
+  Pre:             String )
+  :                Boolean;
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakeAdjectiveRU
   * Insert an adjective of expansion in base term *
   Description:
   This procedure works on the base part of an entity and adds the adjective
@@ -2248,127 +2365,127 @@ procedure          SetAdjectiveRU(
   the term is rebuilt as a single string.</p>
   The adjective may be accompanied by a prefix, to be added in front of the
   adjective.<P>
-  About local variables:
-  - Nounpos: position of the noun (last by default)
-  - NbPlus: number of additional words after the noun
-  - NbShift: 1 for adjective only, 2 for prefix and adjective.</p>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
   Indx:            Integer;
   NbWord:          Integer;
   NounPos:         Integer;
+  AdjPos:          Integer;
   NbShift:         Integer;
-  NbPlus:          Integer;
+  NbPlus:          Integer;            // Nomber of words after the noun
+  Ident:           Integer;
+  IsRule:          Boolean;
   MyWord:          String;
   MyTerm:          String;
-  SyntaxNoun:      String;
-  MyRUTerm:        tRUTerm;
-  MyAdjNode:       WordAnal;
-  MyPrefNode:      WordAnal;
+  NewAdj:          WordAnal;
+  NewPref:         WordAnal;
+  MyNode:          WordAnal;
+  MyAdj:           tRUTerm;
 begin
 
-  // Transform tSingle in tRUTerm
-  {MyRUTerm := tRUTerm.Create( MySelf.Mandat );
-
-  // Find the position of the noun
-  // Normally a noun is in last position, except when an invariant is present
-  NbWord := MySelf.NbWord;
-  NounPos := NbWord - 1;
-  for Indx := 0 to NbWord - 1 do
-  begin
-    if ( MySelf.Node[ Indx ].Cod[ 1 ] = 'n' ) then
-    begin
-      NounPos := Indx;
-      Break;
-    end;
-  end; // for on all words
+  // Initial stuff
+  NounPos := 0;
+  MyNode := Self.Node[ 0 ];
+  MyWord := MyNode.Wrd;
+  AdjPos := NounPos + 1;
+  NbWord := Self.NbWord;
   NbPlus := NbWord - 1 - NounPos;
 
-  // Compute the new cell for the adjective
-  MyAdjNode.Wrd := Adj;
-  MyAdjNode.Lem := Adj;
-  SyntaxNoun := Copy( MyRUTerm.Node[ NounPos ].Cod, 3, 3 );
-  MyAdjNode.Cod := 'ax' + SyntaxNoun;
+  // Prepare a new node for the adjective
+  MyNode := Self.Node[ NounPos ];
+  NewAdj.Cod := 'axmns';
+  if ( MyNode.Cod[ 3 ] = 'f' ) then
+  begin
+    MyAdj := tRUTerm.Create( Adj );
+    Adj := MyAdj.MakeGenderRU( ge_feminine, Adj, IsRule, Ident );
+    NewAdj.Cod := 'axfns';
+  end else
+  if ( MyNode.Cod[ 3 ] = 'n' ) then
+  begin
+    MyAdj := tRUTerm.Create( Adj );
+    Adj := MyAdj.MakeGenderRU( ge_neuter, Adj, IsRule, Ident );
+    NewAdj.Cod := 'axnns';
+  end;
+  NewAdj.Lem := Adj;
 
-  // Compute the new cell for the prefix
+  // Prepare a new node for the prefix
   if ( Pre <> cEmpty ) then
   begin
-    MyPrefNode.Wrd := Pre;
-    MyPrefNode.Lem := Pre;
-    MyPrefNode.Cod := 'pxxxx';
+    NewPref.Wrd := Pre;
+    NewPref.Lem := Pre;
+    NewPref.Cod := 'pxxxx';
   end;
 
-  // Create the new nodes directly before the noun
-  NbShift := 1;
-  Inc( NounPos );
+  // Create the new nodes for the adjective (and prefix) before the noun
   Inc( NbWord );
+  NbShift := 1;
   if ( Pre <> cEmpty ) then
   begin
     Inc( NbWord );
-    Inc( NounPos );
-    NbShift := 2;
+    NbShift := 2
   end;
-  MySelf.NbWord := NbWord;
+  Self.NbWord := NbWord;
   for Indx := NbWord - 1 downto NbWord - 1 - NbPlus do
-    MyRUTerm.Node[ Indx ] := MyRUTerm.Node[ Indx - NbShift ];
+    Self.Node[ Indx ] := Self.Node[ Indx - NbShift ];
 
-  // Move the new adjective (and prefix)
+  // Add the new nodes
   if ( Pre <> cEmpty ) then
   begin
-    MyRUTerm.Node[ NounPos - 1 ] := MyAdjNode;
-    MyRUTerm.Node[ NounPos - 2 ] := MyPrefNode;
+    Self.Node[ 0 ] := NewPref;
+    Self.Node[ 1 ] := NewAdj;
   end else
-    MyRUTerm.Node[ NounPos - 1 ] := MyAdjNode;
-
-  // Check syntax of adjectives
-  MyRUTerm.SetSyntaxRU;
+    Self.Node[ 0 ] := NewAdj;
 
   // Rebuild the term
   MyTerm := cEmpty;
   for Indx := 0 to NbWord - 1 do
   begin
-    MyWord := MyRUTerm.Node[ Indx ].Lem;
-    if ( MyRUTerm.Node[ Indx ].Cod[ 1 ] = 'p' ) then
+    MyWord := Self.Node[ Indx ].Lem;
+    if ( Self.Node[ Indx ].Cod[ 1 ] = 'p' ) then
       MyTerm := MyTerm + MyWord
     else
       MyTerm := MyTerm + MyWord + cSpace;
   end;
+  Result := True;
+  Self.NewNom := Trim( MyTerm );
+end; // _________________________________________________________MakeAdjectiveRU
 
-  MySelf.Mandat := Trim( MyTerm );}
-end; // __________________________________________________________SetAdjectiveRU
-
-//procedure          tSingle.InsertAdjectiveRU(
-//   Adj :            String );
-{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ InsertAdjectiveRU
-  * Insert an adjective of expansion in base term: Russian *
+function           tRUTerm.MakeBaseRU
+  :                Boolean;
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakeBaseRU
+  * Set the base of a Russian term after an expansion *
   Description:
+  This method defines the values applicable to lateral adjectives for the
+  Russian language.</P>
+  In Russian, the lateral adjective comes in first position before the noun
+  it qualifies. It is dependant on this noun in gender, number and case.</P>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
-{var
-  Indx:            Integer;
-  NbWord:          Integer;
-  Ident:           Integer;
-  IsRule:          Boolean;
-  MyMandat:        tRUTerm;
-  NewWord:         WordAnal;
+var
+  Indx:            Integer;            // Index
+  PosWord:         Integer;            // Position of bilateral placeholder
+  Syntax:          String;             // Syntax for placeholder
+  MyCell:          WordAnal;           // Placeholder cell
 begin
-  MyMandat := tRUTerm.Create( Self.Mandat );
-  NbWord := MyMandat.NbWord;
-  MyMandat.NbWord := NbWord + 1;
-  if ( NbWord >= 1 ) then
-    for Indx := NbWord downto 1 do
-      MyMandat.Node[ Indx ] := MyMandat.Node[ Indx - 1 ];
-  NewWord.Wrd := Adj;
-  NewWord.Lem := Adj;
-  NewWord.Cod := 'axxxx';
-  MyMandat.Node[ 0 ] := NewWord;
 
-  // Validate the term
-  MyMandat.GenderRU( IsRule, Ident );
-  Self.Mandat := cEmpty;
-  for Indx := 0 to NbWord do
-    Self.Mandat := Self.Mandat + cSpace + MyMandat.Node[ Indx ].Lem;
-  Self.Mandat := Trim( Self.Mandat );
-end;} // ______________________________________________________InsertAdjectiveRU
+  // Determine the syntax and position of the lateral placeholder
+  // first position in Russian
+  Posword := 0;
+  Syntax := 'mns';
+  for Indx := 0 to Self.NbWord - 1 do
+  if ( Self.Node[ Indx ].Cod[ 1 ] = 'n' ) then
+  begin
+    Syntax := Self.Node[ 0 ].Cod[ 3 ] + 'n' + Self.Node[ 0 ].Cod[ 5 ];
+    Break;
+  end; // for
+
+  // Add the bilateral place holder: xter stands for dexter or sinister
+  MyCell.Lem := 'xter';
+  MyCell.Cod := 'hx' + Syntax;
+  for Indx := Self.NbWord downto 1 do
+    Self.Node[ Indx ] := Self.Node[ Indx - 1 ];
+  Self.Node[ PosWord ] := MyCell;
+  Result := True;
+end; // ______________________________________________________________MakeBaseRU
 
 function           tRUTerm.MakeMandatRU(
   TID:             Integer )
@@ -2377,7 +2494,7 @@ function           tRUTerm.MakeMandatRU(
   * Set the mandatory part of a Russian term *
   Description:
   This procedure defines the mandatory part specified by the TID argument.</p>
-  The part to be added is retrieved as a French term at nominative that is
+  The part to be added is retrieved as a Russian term at nominative that is
   expected to be regular. The genitive is computed and then returned. The
   syntax analysis of term is updated.</p>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
@@ -2404,16 +2521,60 @@ begin
   if ( MyTerm <> nil ) then
   begin
     MyRUTerm := tRUTerm( MyTerm.LgTerm );
-    Result := Trim( MyRUTerm.Genitive );
-  end;
+    if ( MyRUTerm <> nil ) then
+    begin
+      Result := Trim( MyRUTerm.Genitive );
 
-  // Adjust the syntax of owner French term
+      // Adjust the syntax of owner Russian term
+      NbWordGS := MyRUTerm.NbWordGS;
+      for Indx := 0 to NbWordGS - 1 do
+      begin
+        Self.Node[ Indx + Past ] := MyRUTerm.NodeGS[ Indx ];
+      end; // for on all genitive words
+    end;
+  end;
+end; // ____________________________________________________________MakeMandatRU
+
+function           tRUTerm.MakeOptionRU(
+  MyTerm:          tSingle )
+  :                Boolean;
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakeOptionRU
+  * Make the optional part of a Russian term *
+  Description:
+  This procedure defines the optional part specified as a single in
+  argument.</p>
+  The part to be added is retrieved as a Russian term at nominative that is
+  expected to be regular. The genitive is computed and added. The
+  syntax analysis of the term is updated.</p>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+var
+  Indx:            Integer;            // Index on all genitive words
+  NbWordGS:        Integer;            // Number of genitive words
+  Past:            Integer;            // Number of initial words
+  MyGenitive:      String;             // Genitive generated term
+  MyRUTerm:        tRUTerm;            // Applicable term
+begin
+
+  // Build the genitive
+  Past := Self.NbWord;
+  MyRUTerm := tRUTerm( MyTerm.LgTerm );
+  if ( MyRUTerm = nil ) then
+  begin
+    MyTerm.SetError( 995 );
+    Result := False;
+    Exit;
+  end;
+  MyGenitive := MyRUTerm.MakeGenitiveRU;
+
+  // Adjust the syntax of owner Russian term
   NbWordGS := MyRUTerm.NbWordGS;
   for Indx := 0 to NbWordGS - 1 do
   begin
     Self.Node[ Indx + Past ] := MyRUTerm.NodeGS[ Indx ];
   end; // for on all genitive words
-end; // ____________________________________________________________MakeMandatRU
+  Self.NewNom := Trim( MyGenitive );
+  Result := True;
+end; // ____________________________________________________________MakeOptionRU
 
 end.
 
