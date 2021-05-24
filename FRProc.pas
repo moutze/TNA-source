@@ -549,7 +549,7 @@ const
 
                    // Test of optional expansion
   cOptChExpFR:     tOptChExpFR = (
-                   ( 7985, 7985 ) );
+                   ( 7985, 7985 ) );   //
 
                    // Binomes Latin-French
   cLAFREquiv:      tBinome = (
@@ -1751,10 +1751,6 @@ function           tFRTerm.MakeAdjectiveFR(
   occur here.</p>
   The adjective may be accompanied by a prefix, to be added in front of the
   adjective.<p>
-  About local variables:
-  - Nounpos: position of the noun (last by default)
-  - NbPlus: number of additional words after the noun
-  - NbShift: 1 for adjective only, 2 for prefix and adjective.</p>
   In French, it is necessary to take care of possible frontal adjectives.</p>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var

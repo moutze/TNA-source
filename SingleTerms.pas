@@ -177,11 +177,14 @@ type
                              // Make a display term for a set
     function                 MakeDisSet
                                : Boolean;
-                             // Make a plural term for a lateral entity
-    function                 MakePluLateral
+                             // Make a plural term for a set generic entity
+    function                 MakePluralGeneric
                                : Boolean;
-                             // Make a plural term for a set
-    function                 MakePluSet
+                             // Make a plural term for a set specific entity
+    function                 MakePluralSpecific
+                               : Boolean;
+                             // Make a plural term for a set lateral entity
+    function                 MakePluralLateral
                                : Boolean;
                              // Make FMA term for a pair
     function                 MakeFMAPair
@@ -195,12 +198,11 @@ type
                              // Make a term from a Latin model for a pair
     function                 MakeFormulaPair
                                : Boolean;
-                             // Make a term from a Latin model for a set
-    function                 MakeFormulaSet(
-                               AType: tSynType )
+                             // Make a generic set term from a formula
+    function                 MakeFormulaGeneric
                                : Boolean;
-                             // Make a term from a Latin model for a pset
-    function                 MakeFormulaPSet
+                             // Make a specific pset term from a formula
+    function                 MakeFormulaSpecific
                                : Boolean;
                              // Make a term from a Latin model for lateral entities
     function                 MakeFormulaLateral
@@ -230,9 +232,6 @@ type
                              // Set the optional expansion of a term: Spanish
     procedure                SetOptionSP(
                                OptionTerm: tSingle );
-                             // Set the optional expansion of a term: Russian
-    procedure                SetOptionRU(
-                               OptionTerm: tSingle );
                              // Set the laterality of a term
     function                 SetBase(
                                IsBil: Boolean )
@@ -242,8 +241,6 @@ type
                                : Boolean;
                              // Set the base part of a term: Spanish
     procedure                SetBaseSP;
-                             // Set the base part of a term: Russian
-    procedure                SetBaseRU;
                              // Set a formal pset term
     function                 SetFormalPSet(
                                Term: tSingle )
@@ -256,8 +253,10 @@ type
     function                 GetModelFormula()
                                : String;
                              // Set any expansion error
-    procedure                SetError(
-                               ErrNo: Integer );
+    function                 SetError(
+                               ErrNo: Integer;
+                               Past: tSingle = nil )
+                               : String;
   end; // class tSingle
 
   //
@@ -669,7 +668,7 @@ begin
 
     // Treatment of error
     if ( not IsOpt ) then
-      Self.SetError( 999 );
+      Self.SetError( 997 );
   end;
 
   // 5. Management of traditional terms
@@ -693,12 +692,12 @@ begin
   begin
     IsBil := False;
     if ( Actual <> nil ) then
-      IsBil := Actual.IsBilateral;
+      IsBil := Actual.Bilateral;
     IsBas := Self.SetBase( IsBil );
 
     // Treatment of error
     if ( not IsBas ) then
-      Self.SetError( 999 );
+      Self.SetError( 996 );
   end;
 
   // Return variables
@@ -721,6 +720,7 @@ function           tSingle.MakeBasLateral
   entity.</p>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
+  Indx:            Integer;
   Len:             Integer;
   IsOption:        Boolean;
   IsMand:          Boolean;
@@ -743,10 +743,7 @@ begin
   begin
 
     // Retrieve the generator of this entity
-    GenEntity := TAH.GetEntityByTID( Actual.TaxAnc );
-    IsSet := ( Actual.TypeEntity in [ to_SetMat, to_SetImm ] );
-    if ( IsSet ) then
-      GenEntity := TAH.GetEntityByTID( GenEntity.Generator );
+    GenEntity := TAH.GetEntityByTID( Actual.Generator );
     if ( GenEntity <> nil ) then
     begin
 
@@ -833,6 +830,9 @@ begin
           Self.Option := cEmpty;
         end;
         Self.Effective := MyTerm.Effective;
+        Self.LgTerm := tTerm.Create;
+        for Indx := 0 to Term.NbWord - 1 do
+          Self.LgTerm.Node[ Indx ] := Term.Node[ Indx ];
         Result := True;
       end;
     end;
@@ -1718,123 +1718,29 @@ begin
   end;
 end; // ______________________________________________________________MakeDisSet
 
-function           tSingle.MakePluLateral
+function           tSingle.MakePluralGeneric
   :                Boolean;
-{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakePluLateral
-  * Make a plural term for a lateral entity *
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakePluralGeneric
+  * Make a plural term for a generic set entity *
   Description:
-  This method applies to a set or pset entity.</P>
+  This method applies to three different set entities:
+  - the generic set of a pset of tTip tp_setpset,
+  - the specific set entity of a set of tTip tp_set,
+  - the specific set entity of a mset of tTip tp_mset.</P>
+  This method retrieves the generator term at singular and transforms a copy
+  of it to plural, giving the new term. The making of the plural is performed
+  via the language specific procedures.</P>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
-  Plus:            Integer;
-  IsPSet:          Boolean;
-  IsOption:        Boolean;
-  NewTerm:         String;
-  Value:           String;
-  NewMandat:       String;
-  NewShort:        String;
-  NewOption:       String;
-  Actual:          tEntity;
-  Generator:       tEntity;
-  ATerm:           tSingle;
-  Term:            tTerm;
-  MyCateg:         tSynType;
-begin
-  Result := False;
-  Actual := TAH.GetEntityByTID( Self.TID );
-  if ( Actual <> nil ) then
-  begin
-    Generator := TAH.GetEntityByTID( Actual.TaxAnc );
-    if ( Generator <> nil ) then
-    begin
-      IsPSet := ( ( Generator.TypeEntity = to_SetMat ) or
-                  ( Generator.TypeEntity = to_SetImm ) );
-      if ( IsPSet ) then
-        Generator := TAH.GetEntityByTID( Generator.Generator );
-      if ( Generator <> nil ) then
-      begin
-        case Self.Category of
-          st_plm: MyCateg := st_bas;
-          st_pl1: MyCateg := st_ofd;
-          st_pl2: MyCateg := st_od2;
-          st_pl3: MyCateg := st_od3;
-        end;
-        Generator.LgCurrent := Actual.LgCurrent;
-        Generator.Query := tSearch.Create( MyCateg );
-        Generator.SearchTerm;
-        ATerm := Generator.CurrSingle;
-
-        // Retrieve the universal term when the base term is irregular
-        if ( ( ATerm <> nil ) and ( ATerm.Effective = st_irr ) ) then
-        begin
-          Generator.Query.IsUniv := True;
-          Generator.Query.MyType := st_for;
-          Generator.SearchTerm;
-          ATerm := Generator.CurrSingle;
-        end;
-        if ( Aterm <> nil ) then
-        begin
-
-          // Make the plural
-          NewMandat := cEmpty;
-          if ( Actual.LgCurrent in [ lt_Latin, lt_English, lt_French ] ) then
-          begin
-            Term := tTerm.Create;
-            Term.TermCopy( ATerm.LgTerm );
-          end else
-            Term := tTerm.Create( ATerm.Mandat, Self.Language );
-          if ( Term.IsRegular ) then
-          begin
-            Term.Side := Actual.Link;
-            NewMandat := Trim( Term.LatPlural );
-
-            // Create, feed and store the new term
-            Self.Intrinsic := ATerm.Intrinsic;
-            Self.TID := ATerm.TID;
-            Self.LID := ATerm.LID;
-            Self.IsModel := ATerm.IsModel;
-            Self.Libelle := ATerm.Libelle;
-            if ( IsOption ) then
-            begin
-              Self.Mandat := NewMandat;
-              Self.Option := NewOption;
-              Self.Short := NewShort;
-            end else
-            begin
-              Self.Mandat := NewMandat;
-              Self.Option := NewOption;
-              Self.Short := cEmpty;
-            end;
-            Self.Bracket := NewTerm;
-            Self.BuildFrom := ATerm.BuildFrom;
-            Self.Done := True;
-            Self.Effective := ATerm.Effective;
-            Result := True;
-          end;
-        end;
-      end;
-    end;
-  end;
-end; // __________________________________________________________MakePluLateral
-
-function           tSingle.MakePluSet
-  :                Boolean;
-{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakePluSet
-  * Make a plural term for a set or a pset *
-  Description:
-  This method applies to a set or pset entity. for a main term or a synonym.</P>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
-var
-  Plus:            Integer;
-  IsPSet:          Boolean;
-  NewTerm:         String;
-  NewValue:        String;
-  MyTerm:          String;
-  Actual:          tEntity;
-  Generator:       tEntity;
-  ATerm:           tSingle;
-  Term:            tTerm;
-  NewCateg:        tSynType;
+  Indx:            Integer;            // Index on syntax parts
+  IsOpt:           Boolean;            // Flag for optional expansion
+  NewValue:        String;             // New mandatory value
+  MyTerm:          String;             // obsolete
+  Actual:          tEntity;            // Current entity of the single
+  Generator:       tEntity;            // Generator of current entity
+  ATerm:           tSingle;            // Source single from the generator
+  Term:            tTerm;              // New language term
+  NewCateg:        tSynType;           // Synonym type for source single
 begin
 
   // Define the term category to search for
@@ -1846,7 +1752,7 @@ begin
     st_pl1: NewCateg := st_ofd;
     st_pl2: NewCateg := st_od2;
     st_pl3: NewCateg := st_od3;
-  end;
+  end; // case
 
   // Retrieve the generator entity
   if ( Actual <> nil ) then
@@ -1859,39 +1765,28 @@ begin
       Generator.Query.IsUniv := Self.IsUniversal;
       Generator.SearchTerm;
       ATerm := Generator.CurrSingle;
-      if ( Aterm <> nil ) then
+      if ( ( ATerm <> nil ) and ( ATerm.LgTerm <> nil ) ) then
       begin
         MyTerm := Trim( ATerm.Mandat );
 
-        // Define the bracket part for paired set
-        IsPSet := ( ( Actual.TypeEntity = to_PstMat ) or
-                    ( Actual.TypeEntity = to_PstImm ) );
-        NewTerm := cEmpty;
-        if ( IsPSet ) then
-        begin
-          case Self.Language of
-            lt_Latin: NewTerm := cSpace + cRoundPar;
-            lt_English: NewTerm := cSpace + cRoundPair;
-            lt_French: NewTerm := cSpace + cRoundPaire;
-            lt_Spanish: NewTerm := cSpace + cRoundPar;
-            lt_Russian: NewTerm := cSpace + cRoundPara;
-          end;
-        end;
-
-        // Define the plural form
-        if ( Self.Language in [ lt_Latin, lt_French ] ) then
+        // Prepare the new term
+        if ( Self.Language in [ lt_Latin, lt_French, lt_Russian ] ) then
         begin
           Term := tTerm.Create;
           Term.TermCopy( ATerm.LgTerm );
         end else
+        if ( Self.Language in [ lt_English, lt_Spanish ] ) then
         begin // temporary
           Term := tTerm.Create( MyTerm, Self.Language );
         end;
+
+        // Generate the plural calling language specific procedures
         if ( Term.IsRegular ) then
         begin
+          Term.IsOption := ATerm.Exp > 0;
           NewValue := Term.Plural;
 
-          // Create, feed and store the new term
+          // Feed and store the new term
           Self.Intrinsic := ATerm.Intrinsic;
           Self.TID := ATerm.TID;
           Self.LID := ATerm.LID;
@@ -1899,17 +1794,253 @@ begin
           Self.Libelle := ATerm.Libelle;
           Self.Mandat := NewValue;
           Self.Option := ATerm.Option;
-          Self.Bracket := NewTerm;
           Self.BuildFrom := ATerm.BuildFrom;
           Self.Done := True;
           Self.Effective := ATerm.Effective;
           Self.Performed := ATerm.Performed;
+          Self.LgTerm := tTerm.Create;
+          for Indx  := 0 to Term.NbWordGS - 1 do
+            Self.LgTerm.Node[ Indx ] := Term.NodeGS[ Indx ];
+          Self.LgTerm.IsRegular := Term.IsRegular;
+          Self.Language := Term.Language;
           Result := True;
+        end else
+
+        // Error with syntax analysis
+        begin
+          if ( Self.Category = st_plm ) then
+            Self.Mandat := Self.SetError( 940, ATerm );
         end;
+      end else
+
+      // Invalid base single, for main term only
+      begin
+        if ( Self.Category = st_plm ) then
+          Self.Mandat := Self.SetError( 941, ATerm );
       end;
+    end else
+
+    // Error missing generator
+    begin
+      if ( Self.Category = st_plm ) then
+        Self.Mandat := Self.SetError( 942, ATerm );
     end;
   end;
-end; // ______________________________________________________________MakePluSet
+end; // _______________________________________________________MakePluralGeneric
+
+function           tSingle.MakePluralSpecific
+  :                Boolean;
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakePluralSpecific
+  * Make a plural term for a specific set entity *
+  Description:
+  This method applies to a unique set entity:
+  - the specific pset of tTip tp_pset.</P>
+  This method retrieves the generic set term at plural and transforms a copy
+  of it to a pair, giving the new term.</P>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+var
+  Plus:            Integer;
+  IsPSet:          Boolean;
+  MyBracket:       String;
+  Value:           String;
+  NewMandat:       String;
+  Actual:          tEntity;
+  Generator:       tEntity;
+  MyUnit:          tUnit;
+  ATerm:           tSingle;
+  Term:            tTerm;
+  MyCateg:         tSynType;
+  IsRule:          Boolean;
+  Ident:           Integer;
+begin
+  Result := False;
+  Actual := TAH.GetEntityByTID( Self.TID );
+  if ( Actual <> nil ) then
+  begin
+    MyUnit := TAH.GetUnitByPos( Actual.Tetra );
+    Generator := TAH.GetEntityByTID( MyUnit.ASet );
+    Generator.LgCurrent := Actual.LgCurrent;
+    Generator.Query := tSearch.Create( Self.Category );
+    Generator.SearchTerm;
+    ATerm := Generator.CurrSingle;
+
+    // Retrieve the universal term when the base term is irregular
+    if ( ( ATerm <> nil ) and ( ATerm.Effective = st_irr ) ) then
+    begin
+      Generator.Query.IsUniv := True;
+      Generator.Query.MyType := st_for;
+      Generator.SearchTerm;
+      ATerm := Generator.CurrSingle;
+    end;
+    if ( ( Aterm <> nil ) and ( ATerm.LgTerm <> nil ) ) then
+    begin
+
+      // Make the display term of the pset
+      NewMandat := cEmpty;
+      if ( Actual.LgCurrent in [ lt_Latin, lt_English, lt_French ] ) then
+      begin
+        Term := tTerm.Create;
+        Term.TermCopy( ATerm.LgTerm );
+        Term.Language := Self.Language;
+      end else
+        Term := tTerm.Create( ATerm.Mandat, Self.Language );
+
+      // Create, feed and store the new term
+      if ( Term.IsRegular ) then
+      begin
+        case Self.Language of
+          lt_Latin: MyBracket := cSpace + cRoundPar;
+          lt_English: MyBracket := cSpace + cRoundPair;
+          lt_French: MyBracket := cSpace + cRoundPaire;
+          lt_Spanish: MyBracket := cSpace + cRoundPar;
+          lt_Russian: MyBracket := cSpace + cRoundPara;
+        end;
+        Self.Intrinsic := ATerm.Intrinsic;
+        Self.TID := ATerm.TID;
+        Self.LID := ATerm.LID;
+        Self.IsModel := ATerm.IsModel;
+        Self.Libelle := ATerm.Libelle;
+        Self.Mandat := ATerm.Mandat;
+        Self.Bracket := MyBracket;
+        Self.BuildFrom := ATerm.BuildFrom;
+        Self.Done := True;
+        Self.Effective := ATerm.Effective;
+        Self.LgTerm := ATerm.LgTerm;
+        Self.Performed := ATerm.Performed;
+        Result := True;
+      end else
+
+      // Error with irregular language term
+      begin
+        Self.Mandat := Self.SetError( 957, ATerm );
+      end; // if ( Term.IsRegular )
+    end else
+
+    // Error with missing generator single
+    begin
+      Self.Mandat := Self.SetError( 956, ATerm );
+    end; // if ( Aterm <> nil )
+  end else
+
+  // Error with missing entity
+  begin
+    Self.Mandat := Self.SetError( 955, ATerm );
+  end; // if ( Actual <> nil)
+end; // ______________________________________________________MakePluralSpecific
+
+function           tSingle.MakePluralLateral
+  :                Boolean;
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakePluralLateral
+  * Make a plural term for a set lateral entity *
+  Description:
+  This method applies to two different set entities:
+  - the specific left set entity of tTip tp_leftpset,
+  - the specific right set entity of tTip tp_rightpset.</P>
+  This method retrieves the generic set term at plural and transforms a copy
+  of its lateral value, giving the new term. The making of the term is performed
+  via the language specific procedures.</P>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~} var
+  Plus:            Integer;
+  IsPSet:          Boolean;
+  IsOption:        Boolean;
+  NewTerm:         String;
+  Value:           String;
+  NewMandat:       String;
+  NewShort:        String;
+  NewOption:       String;
+  Actual:          tEntity;
+  Generator:       tEntity;
+  MyUnit:          tUnit;
+  ATerm:           tSingle;
+  Term:            tTerm;
+  MyCateg:         tSynType;
+  IsRule:          Boolean;
+  Ident:           Integer;
+begin
+  Result := False;
+  Actual := TAH.GetEntityByTID( Self.TID );
+  if ( Actual <> nil ) then
+  begin
+    MyUnit := TAH.GetUnitByPos( Actual.Tetra );
+    Generator := TAH.GetEntityByTID( MyUnit.ASet );
+    Generator.LgCurrent := Actual.LgCurrent;
+    Generator.Query := tSearch.Create( Self.Category );
+    Generator.SearchTerm;
+    ATerm := Generator.CurrSingle;
+
+    // Retrieve the universal term when the base term is irregular
+    if ( ( ATerm <> nil ) and ( ATerm.Effective = st_irr ) ) then
+    begin
+      Generator.Query.IsUniv := True;
+      Generator.Query.MyType := st_for;
+      Generator.SearchTerm;
+      ATerm := Generator.CurrSingle;
+    end;
+    if ( ( Aterm <> nil ) and ( ATerm.LgTerm <> nil ) ) then
+    begin
+
+      // Make the display term of the pset
+      NewMandat := cEmpty;
+      if ( Actual.LgCurrent in [ lt_Latin, lt_English, lt_French ] ) then
+      begin
+        Term := tTerm.Create;
+        Term.TermCopy( ATerm.LgTerm );
+        Term.Language := Self.Language;
+      end else
+        Term := tTerm.Create( ATerm.Mandat, Self.Language );
+      if ( Term.IsRegular ) then
+      begin
+        Term.Side := Actual.Link;
+        NewMandat := Trim( Term.MakeLateral );
+
+        // Create, feed and store the new term
+        if ( NewMandat <> cEmpty ) then
+        begin
+          Self.Intrinsic := ATerm.Intrinsic;
+          Self.TID := ATerm.TID;
+          Self.LID := ATerm.LID;
+          Self.IsModel := ATerm.IsModel;
+          Self.Libelle := ATerm.Libelle;
+          if ( IsOption ) then
+          begin
+            Self.Mandat := NewMandat;
+            Self.Option := NewOption;
+            Self.Short := NewShort;
+          end else
+          begin
+            Self.Mandat := NewMandat;
+            Self.Option := NewOption;
+            Self.Short := cEmpty;
+          end;
+          Self.Bracket := NewTerm;
+          Self.BuildFrom := ATerm.BuildFrom;
+          Self.Done := True;
+          Self.Effective := ATerm.Effective;
+          Self.LgTerm := Term;
+          Self.Performed := ATerm.Performed;
+          Result := True;
+        end else
+
+        // Error with laterality generation
+        begin
+          Self.Intrinsic := ATerm.Intrinsic;
+          Self.TID := ATerm.TID;
+          Self.Mandat := Self.SetError( 966, ATerm );
+        end;
+      end else
+
+      // Error with syntax analysis
+      begin
+        Self.Mandat := Self.SetError( 967, ATerm );
+      end;
+    end else
+
+    // Error with generator
+    begin
+      Self.Mandat := Self.SetError( 968, ATerm );
+    end;
+  end;
+end; // _______________________________________________________MakePluralLateral
 
 function           tSingle.MakeFMAPair
   :                Boolean;
@@ -2112,7 +2243,8 @@ begin
     Lang := Self.Language;
     Self.IsBilMand := EntityS.IsBilateral;
     MyTerm := EntityS.GetStructuredTerm( lb_Official, Lang, st_bas );
-    MyTerm.LgTerm.IsGeneric := EntityS.IsGeneric;
+    if ( MyTerm.LgTerm <> nil ) then
+      MyTerm.LgTerm.IsGeneric := EntityS.IsGeneric;
 
     // Prepare the single term
     IsDone := Self.MakeMandat( MyTerm );
@@ -2150,10 +2282,11 @@ begin
   if ( Self.Language in [ lt_Spanish, lt_Russian ] ) then
     Self.Mandat := Self.LgTerm.Nominative + cSpace + MyExpand
   else
+  if ( MyTerm.LgTerm <> nil ) then
   begin
 
     // Build the mandatory term
-    NewTerm := Self.Mandat;
+    {NewTerm := Self.Mandat;
     for Indx := 0 to MyTerm.LgTerm.NbWordGS - 1 do
     begin
       MyType := MyTerm.LgTerm.NodeGS[ Indx ].Cod[ 1 ];
@@ -2163,9 +2296,10 @@ begin
         NewTerm := NewTerm + cSpace;
       NewTerm := NewTerm + MyTerm.LgTerm.NodeGS[ Indx ].Lem;
       IsPrefix := MyType = 'p';
-    end;
-    Self.Mandat := NewTerm;
-  end;
+    end;}
+    Self.Mandat := Self.LgTerm.Nominative;
+  end else
+    Self.SetError( 988 );
 end; // ______________________________________________________________MakeMandat
 
 function           tSingle.SetOption
@@ -2250,25 +2384,30 @@ begin
     lt_English: IsDone := tENTerm( Self.LgTerm ).MakeOptionEN( MyTerm );
     lt_French:  IsDone := tFRTerm( Self.LgTerm ).MakeOptionFR( MyTerm );
     // lt_Spanish: Self.SetOptionSP( MyTerm );
-    // lt_Russian: Self.SetOptionRU( MyTerm );
+    lt_Russian:  IsDone := tRUTerm( Self.LgTerm ).MakeOptionRU( MyTerm );
   end;
 
   // Build the text of expansion
-  NbWord := MyTerm.LgTerm.NbWordGS;
-  MyExpand := cEmpty;
-  IsPrefix := False;
-  for Indx := 0 to NbWord - 1 do
+  if ( IsDone ) then
   begin
-    MyCode := MyTerm.LgTerm.NodeGS[ Indx ].Cod[ 1 ];
-    if ( ( MyCode = 'h' ) or ( MyCode = 's' ) ) then
-      Continue
-    else
-    if ( not IsPrefix ) then
-      MyExpand := MyExpand + cSpace;
-    MyExpand := MyExpand + MyTerm.LgTerm.NodeGS[ Indx ].Lem;
-    IsPrefix := MyCode = 'p';
+    NbWord := MyTerm.LgTerm.NbWordGS;
+    MyExpand := cEmpty;
+    IsPrefix := False;
+    for Indx := 0 to NbWord - 1 do
+    begin
+      if ( MyTerm.LgTerm.NodeGS[ Indx ].Cod = cEmpty ) then
+        Continue;
+      MyCode := MyTerm.LgTerm.NodeGS[ Indx ].Cod[ 1 ];
+      if ( ( MyCode = 'h' ) or ( MyCode = 's' ) ) then
+        Continue
+      else
+      if ( not IsPrefix ) then
+        MyExpand := MyExpand + cSpace;
+      MyExpand := MyExpand + MyTerm.LgTerm.NodeGS[ Indx ].Wrd;
+      IsPrefix := MyCode = 'p';
+    end;
+    Self.Option := Trim( MyExpand );
   end;
-  Self.Option := Trim( MyExpand );
   Result := IsDone;
 end; //_______________________________________________________________MakeOption
 
@@ -2291,26 +2430,6 @@ begin
     Genitive := Copy( Genitive, 8, Length( Genitive ) );
   Self.Option := cSpace + Genitive + OptionTerm.Option;
 end; // _____________________________________________________________SetOptionSP
-
-procedure          tSingle.SetOptionRU(
-  OptionTerm:      tSingle );
-{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SetOptionRU
-  * Set the option part of a Russian term after an expansion *
-  Description:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
-var
-  Genitive:        String;
-  MyMandat:        tRUTerm;
-begin
-  MyMandat := tRUTerm.Create( OptionTerm.Mandat );
-  Genitive := MyMandat.Genitive;
-  if ( Copy( Genitive, 1, 4 ) = 'пары' ) then
-    Genitive := Copy( Genitive, 9, Length( Genitive ) )
-  else
-  if ( Copy( Genitive, 1, 7 ) = 'вместов' ) then
-    Genitive := Copy( Genitive, 8, Length( Genitive ) );
-  Self.Option := cSpace + Genitive + OptionTerm.Option;
-end; // _____________________________________________________________SetOptionRU
 
 function           tSingle.SetBase(
   IsBil:           Boolean )
@@ -2336,7 +2455,7 @@ begin
   // Select the language
   IsDone := Self.MakeBase;
   if ( not IsDone ) then
-    Self.SetError( 999 );
+    Self.SetError( 998 );
   Result := IsDone;
 end; // _________________________________________________________________SetBase
 
@@ -2361,7 +2480,7 @@ begin
     lt_English: IsDone := tENTerm( Self.LgTerm ).SetBaseEN;
     lt_French:  IsDone := tFRTerm( Self.LgTerm ).SetBaseFR;
     lt_Spanish: Self.SetBaseSP;
-    lt_Russian: Self.SetBaseRU;
+    lt_Russian: IsDone := tRUTerm( Self.LgTerm ).MakeBaseRU;
   end;
   Result := IsDone;
 end; // ________________________________________________________________MakeBase
@@ -2392,33 +2511,6 @@ begin
     MyGender := MyOption.GenderES;
   end;
 end; // _______________________________________________________________SetBaseSP
-
-procedure          tSingle.SetBaseRU;
-{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SetBaseRU
-  * Set the base of a Russian term after an expansion *
-  Description:
-  This method defines the values applicable to lateral adjectives for the
-  Russian language.</P>
-  In Russian, the lateral adjective comes in first position before the noun
-  it qualifies. It is dependant on this noun in gender, number and case.</P>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
-var
-  Ident:           Integer;
-  IsRule:          Boolean;
-  MyMandat:        tRUTerm;
-  MyOption:        tRUTerm;
-  MyGender:        tGender;
-begin
-  // Lateral adjective as first word: self.WordS remains unchanged
-  MyMandat := tRUTerm.Create( Self.Mandat );
-
-  // Presence of a bilateral optional expansion
-  if ( Self.IsBilOpt ) then
-  begin
-    MyOption := TRUTerm.Create( Self.Option );
-    MyGender := MyOption.GenderRU( IsRule, Ident );
-  end;
-end; // _______________________________________________________________SetBaseRU
 
 function           tSingle.SetFormalPSet(
   Term:            tSingle )
@@ -2573,7 +2665,7 @@ begin
     lt_Spanish:
       SetAdjectiveES( MyAdj, MyPref, Self );
     lt_Russian:
-      SetAdjectiveRU( MyAdj, MyPref, Self );
+      Result := tRUTerm( Self.LgTerm ).MakeAdjectiveRU( MyAdj, MyPref );
   end; // case on all universal languages
 
   // Error in language procedure
@@ -2730,14 +2822,14 @@ begin
   end;
 end; // _________________________________________________________MakeFormulaPair
 
-function           tSingle.MakeFormulaSet(
-  AType:           tSynType )
+function           tSingle.MakeFormulaGeneric()
   :                Boolean;
-{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakeFormulaSet
-  * Make a term from the universal model for a set *
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakeFormulaGeneric
+  * Make a generic set term from a formula *
   Description:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
+  Indx:            Integer;
   IsPSet:          Boolean;
   MyBasic:         String;
   DisText:         String;
@@ -2746,7 +2838,8 @@ var
   Actual:          tEntity;
   Generator:       tEntity;
   ATerm:           tSingle;
-  MyTerm:          tTerm;
+  MyTerm:          String;
+  Term:            tTerm;
   MyBuild:         tBuild;
 begin
   Result := False;
@@ -2760,15 +2853,30 @@ begin
     begin
 
       // Search for the generator entity
-      Generator.Query := tSearch.Create( AType );
+      Generator.Query := tSearch.Create( st_for );
       Generator.Query.Direct := True;
       Generator.SearchTerm;
       ATerm := Generator.CurrSingle;
+      if ( ( ATerm <> nil ) and ( ATerm.LgTerm <> nil ) ) then
+      begin
+        if ( Self.Language in [ lt_Latin, lt_French, lt_Russian ] ) then
+        begin
+          Term := tTerm.Create;
+          Term.TermCopy( ATerm.LgTerm );
+        end else
+        if ( Self.Language in [ lt_English, lt_Spanish ] ) then
+        begin // temporary
+          MyTerm := Trim( ATerm.Mandat );
+          Term := tTerm.Create( MyTerm, Self.Language );
+        end;
+
+        // Generate the plural calling language specific procedures
+        if ( Term.IsRegular ) then
+        begin
+          NewValue := Term.Plural;
 
       // Build the display term
-      if ( ATerm <> nil ) then
-      begin
-        NewTerm := cEmpty;
+        {NewTerm := cEmpty;
         if ( Self.Language = lt_Latin ) then
           NewTerm := cSpace + cRoundPar;
         if ( Self.Language = lt_English ) then
@@ -2784,7 +2892,7 @@ begin
         MyTerm := tTerm.Create( ATerm.Mandat, Self.Language );
         if ( MyTerm.IsRegular ) then
         begin
-          NewValue := MyTerm.Plural;
+          NewValue := MyTerm.Plural;}
 
           // Create, feed and store the new term
           Self.Intrinsic := ATerm.Intrinsic;
@@ -2798,16 +2906,20 @@ begin
           Self.BuildFrom := ATerm.BuildFrom;
           Self.Done := True;
           Self.Effective := ATerm.Effective;
+          Self.LgTerm := tTerm.Create;
+          for Indx  := 0 to Term.NbWordGS - 1 do
+            Self.LgTerm.Node[ Indx ] := Term.NodeGS[ Indx ];
+          Self.LgTerm.IsRegular := Term.IsRegular;
           Result := True;
         end;
       end;
     end;
   end;
-end; // __________________________________________________________MakeFormulaSet
+end; // ______________________________________________________MakeFormulaGeneric
 
-function           tSingle.MakeFormulaPSet
+function           tSingle.MakeFormulaSpecific
   :                Boolean;
-{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakeFormulaPSet
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakeFormulaSpecific
   * Make a term from the universal model for a pset *
   Description:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
@@ -2865,7 +2977,7 @@ begin
       end;
     end;
   end;
-end; // _________________________________________________________MakeFormulaPSet
+end; // _____________________________________________________MakeFormulaSpecific
 
 function           tSingle.MakeFormulaLateral
   :                Boolean;
@@ -2900,8 +3012,8 @@ begin
     ValN := nu_sin;
     if ( IsSet ) then
       ValN := nu_plu;
-    if ( IsSet ) then
-      GenEntity := TAH.GetEntityByTID( GenEntity.Generator );
+    // if ( IsSet ) then
+    //   GenEntity := TAH.GetEntityByTID( GenEntity.Generator );
     if ( GenEntity <> nil ) then
     begin
 
@@ -2914,7 +3026,7 @@ begin
       begin
 
         // Apply laterality on optional part
-        IsQ := True;
+        IsQ := False;
         if ( IsQ ) then
         begin
           Term := tTerm.Create( Trim( MyTerm.Option ), Self.Language, ValN );
@@ -3013,15 +3125,26 @@ begin
   Result := MyModel;
 end; // _________________________________________________________GetModelFormula
 
-procedure          tSingle.SetError(
-  ErrNo:           Integer );
+function           tSingle.SetError(
+  ErrNo:           Integer;
+  Past:            tSingle )
+  :                String;
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SetError
   * Create an error in a single term *
   Description:
+  This procedure manages an error specified in argument. It generates an
+  error message and update the chain of errors with the new error added to
+  the already existing chain from the past single.</p>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+var
+  MyError:         String;
 begin
   Self.ErrNo := ErrNo;
-  Self.ErrChain := Self.ErrChain + cSemi + IntToStr( ErrNo );
+  Self.ErrChain := IntToStr( ErrNo );
+  if ( ( Past <> nil ) and ( Past.ErrChain <> cEmpty ) ) then
+    Self.ErrChain := Self.ErrChain + cSemi + Past.ErrChain;
+  MyError := TAH.GetLabel( ErrNo );
+  Result := 'ERR' + IntToStr( ErrNo ) + cSpace + MyError;
 end; // ________________________________________________________________SetError
 
 end.

@@ -9,34 +9,6 @@ uses
   TAHParam, Term, SingleTerms;
 
 const
-  CurSep           = '¦';
-  cBreak           = '|';
-  cSpace           = ' ';
-  cEmpty           = '';
-  cAster           = '*';
-  cRol             = '(';
-  cRor             = ')';
-  cSql             = '[';
-  cSqr             = ']';
-  cCul             = '{';
-  cCur             = '}';
-  cAnl             = '<';
-  cAnr             = '>';
-  cPeriod          = '.';
-  cSemi            = ';';
-  cColumn          = ':';
-  cDash            = '-';
-  cQuote           = #39;      // Single quote
-  cDQuote          = '"';      // Double quote
-  cSlash           = '/';
-  cComma           = ',';
-
-  NbPrefix         = 13;
-  cClassis         = 'classis';
-  cInvalidEntry    = 'Invalid entry';
-  cMissingWord     = 'Missing word';
-  cDeclension      = 'declension';
-
   NbFemAdj         = 2;
   NbNeuAdj         = 2;
   NbFemAdjExcept   = 6;
@@ -50,10 +22,11 @@ const
   NbNounChGenPluLA = 1;
   NbAdjChGenPluLA  = 1;
   NbNoChExpLA      = 13;
-  NbAdjChExpLA     = 9;
-  NbMandChExpLA    = 4;
-  NbLatChExpLA     = 7;
-  NbOptChExpLA     = 2;
+  NbAdjChExpLA     = 10;
+  NbMandChExpLA    = 7;
+  NbLatChExpLA     = 8;
+  NbOptChExpLA     = 3;
+  NbSynChExpLA     = 2;
 
 type
                    { Rules for transition of adjectives from masculine to
@@ -67,11 +40,9 @@ type
                    { Exceptions to neuter rule }
   tNeuAdjExcept    = Array[ 1 .. NbNeuAdjExcept, 1 .. 2 ] of String;
                    // Tests for nominative plural nouns
-  tNounChGenderLA  = Array[ 1 .. NbNounChGenderLA,
-                       va_word .. va_1 ] of String;
+  tNounChGenderLA  = Array[ 1 .. NbNounChGenderLA, va_word .. va_1 ] of String;
                    // Tests for nominative plural nouns
-  tAdjChGenderLA   = Array[ 1 .. NbAdjChGenderLA,
-                      ge_masculine .. ge_neuter ] of String;
+  tAdjChGenderLA   = Array[ 1 .. NbAdjChGenderLA, ge_masculine .. ge_neuter ] of String;
                    // Tests for nominative plural nouns
   tNounChPluralLA  = Array[ 1 .. NbNounChPluralLA, nu_sin .. nu_plu ] of String;
                    // Tests for nominative plural nouns
@@ -94,102 +65,8 @@ type
   tLatChExpLA      = Array[ 1 .. NbLatChExpLA, nu_sin .. nu_plu ] of Integer;
                    // Tests for optional expansions
   tOptChExpLA      = Array[ 1 .. NbOptChExpLA, nu_sin .. nu_plu ] of Integer;
-
-                   { * Enumeration type for code TCN: Type, Case, Number * }
-  tTCN             = (
-                   tcn_nul,            // nothing
-                   tcn_sns,            // substantive, nominative, singular
-                   tcn_sgs,            // substantive, genitive, singular
-                   tcn_snp,            // substantive, nominative, plural
-                   tcn_sgp,            // substantive, genitive, plural
-                   tcn_ans,            // adjective, nominative, singular
-                   tcn_ags,            // adjective, genitive, singular
-                   tcn_anp,            // adjective, nominative, plural
-                   tcn_agp,            // adjective, genitive, plural
-                   tcn_cla );          // classis
-
-                   { * Single row of transition matrix }
-  tTransit         = Array[ tTCN ] of Boolean;
-
-                   { * Transition matrix * }
-  tMatrix          = Array[ tTCN ] of TTransit;
-
-                   // 4 forms of a noun plus gender
-  tNounCase        = Array[ 1 .. 5 ] of String;
-
-                   // 12 forms of an adjective + LID
-  tAdjCase         = Array[ 1 .. 13 ] of String;
-
-                   { * Storage of term file *
-                   Description:
-                   <TABLE>
-                   Field      Explanation
-                   ---------  --------------------------------------------------
-                   Cod        TA code
-                   TID        TID unique identifier of TA
-                   Ter        Base Latin term
-                   Exp        Expanded Latin term
-                   </TABLE> }
-  TermRec          = record
-    Cod:           String;
-    TID:           Integer;
-    Ter:           String;
-    Exp:           String;
-  end;
-                   { * Storage of Latin dictionary *
-                   Description:
-                   The Latin dictionary is made of 5 entries per record, as
-                   described in the following table:
-                   <TABLE>
-                   Field      Explanation
-                   ---------  --------------------------------------------------
-                   LID        LID unique identifier of Latin dictionary
-                   Cas        Latin case in declension
-                   Cod        Code for type, declension, gender, case and number
-                   Sub        Full Latin term
-                   Cla        Class to which the present word belongs
-                   </TABLE> }
-  LatinRec         = record
-    LID:           Integer;
-    Adj:           Integer;
-    Pre:           Integer;
-    Cas:           String;
-    Cod:           String;
-    Sub:           String;
-    Cla:           String;
-  end;
-
-                   { Array for storage of integers }
-  tListInt         = Array of Integer;
-
-                   { Enumeration type for Latin word categories }
-  tWordCateg       = (
-                   wt_sub,                 // substantive
-                   wt_adj,                 // adjective
-                   wt_com,                 // comparative adjective
-                   wt_ord,                 // ordinal adjective
-                   wt_mod,                 // modal prefix
-                   wt_mor,                 // morpheme
-                   wt_ppr,                 // present participle
-                   wt_inv,                 // invariant acronym
-                   wt_hol,                 // main placeholder
-                   wt_sec );               // second placeholder
-
-                   { Enumeration type for Latin genders }
-  tWordGender      = (
-                   gd_mas,                 // masculine
-                   gd_fem,                 // feminine
-                   gd_neu );               // neutral
-
-                   { Enumeration type for Latin numbers }
-  tWordNumber      = (
-                   nb_sing,                // singular
-                   nb_plur );              // plural
-
-                   { Enumeration type for Latin cases }
-  tWordCase        = (
-                   wa_nom,                 // nominative
-                   wa_gen );               // genitive
+                   // Tests for synonym expansions
+  tSynChExpLA      = Array[ 1 .. NbSynChExpLA, nu_sin .. nu_plu ] of Integer;
 
                              // Define the Latin Term object
   tLatinTerm                 = class( tTerm )
@@ -265,6 +142,12 @@ type
                                : Boolean;
   end; // Class tLatinTerm
 
+var
+                   { * Total number of entries in Latin dictionary * }
+  TotCas:          Integer;
+                   { * Dynamic array for storage of Latin dictionary * }
+  Latin:           Array of LatinRec;
+
 const
                    // Rules for feminine singular adjectives
   cFemAdj:         tFemAdj = (
@@ -284,10 +167,10 @@ const
                    ( 'sinister', 'sinistra' ) );
                    // Exceptions for neuter singular adjectives
   cNeuAdjExcept:   tFemAdjExcept = (
-                   ( 'posterius', 'posterius' ),
-                   ( 'superius', 'superius' ),
-                   ( 'anterius', 'anterius' ),
-                   ( 'inferius', 'inferius' ),
+                   ( 'posterior', 'posterius' ),
+                   ( 'superior', 'superius' ),
+                   ( 'anterior', 'anterius' ),
+                   ( 'inferior', 'inferius' ),
                    ( 'dexter', 'dextrum' ),
                    ( 'sinister', 'sinistrum' ) );
                    // Test values for gender of nouns
@@ -353,14 +236,16 @@ const
   cAdjChGenPluLA:  tAdjChGenPluLA = (
                    ( 'clarus', 'clarorum', 'clararum', 'clarorum' ) );
 
+                   // Expansion tests
+                   // ===============
                    // Test of terms without expansion
   cNoChExpLA:      tNoChExpLA = (
-                   ( 28827, 28827 ),   // gyri interlobares (par)
+                   ( 8833, 39146 ),    // neura axoaxonici isocorticis
                    ( 5264, 5264 ),     // telencephalon (generic)
                    ( 29947, 29947 ),   // palpebra (generic)
                    ( 7053, 7053 ),     // palpebrae
                    ( 6005, 6005 ),     // gyrus angularis
-                   ( 5973, 5973 ),     // gyrus cerebri
+                   ( 28827, 28827 ),   // gyri interlobares (par)
                    ( 7816, 7816 ),     // compartiment infratentoriel
                    ( 7670, 7670 ),     // neurone ganglionaire nain
                    ( 7044, 7044 ),     // anneau tendineux commun
@@ -372,7 +257,8 @@ const
                    // Test of adjective expansion
                    // First TID: st_for; second TID: st_val
   cAdjChExpLA:     tAdjChExpLA = (
-                   ( 33461, 33461 ),   // segmenta cervicalia medullae spinalis
+                   ( 7985, 33461 ),    // segmenta cervicalia medullae spinalis
+                   ( 8525, 27729 ),    // fibrae corticothalamicae
                    ( 5792, 5792 ),     // commissura habenularis
                    ( 4155, 4155 ),     // arteria ulnaris
                    ( 8415, 8415 ),     // tractus hypothalamospinalis
@@ -385,146 +271,45 @@ const
                    // Test of mandatory expansion
   cMandChExpLA:    tMandChExpLA = (
                    ( 6085, 6085 ),     // radiatio corporis callosi
-                   ( 12294, 12294 ),   // fasc prosencephali medialis ascendens
+                   ( 5973, 5973 ),     // gyrus cerebri
+                   ( 13172, 13172 ),   // tractus commissuralis hippocampi
                    ( 5142, 5142 ),     // pars spinalis fili terminalis
-                   ( 13172, 13172 ) ); // tractus commissuralis hippocampi
+                   ( 12294, 12294 ),   // fasc prosencephali medialis ascendens
+                   ( 9275, 9275 ),     // segmentum anterius hippocampi
+                   ( 0, 0 ) );
 
                    // Test of lateral expansion
   cLatChExpLA:     tLatChExpLA = (
-                   ( 38443, 38443 ),   // lobus temporalis dexter
-                   ( 28635, 28635 ),   // radiatio sinistra corporis callosi
+                   ( 28984, 28984 ),   // tractus striatales sinistri
                    ( 28935, 28935 ),   // cellulae cholinergicae cruris ...
                    ( 32446, 32446 ),   // tractus commissurales hippocampi ...
+                   ( 28635, 28635 ),   // radiatio sinistra corporis callosi
+                   ( 38443, 38443 ),   // lobus temporalis dexter
                    ( 28074, 28074 ),   // fibrae periventriculares thalami ...
                    ( 38488, 38488 ),   // facies superolateralis sinistra ...
                    ( 0, 0 ) );
 
                    // Test of optional expansion
   cOptChExpLA:     tOptChExpLA = (
+                   ( 7985, 7985 ),     // segmentum cervicale medullae spinalis
                    ( 5304, 5304 ),     // pars rhombencephalica caudalis ...
-                   ( 7985, 7985 ) );   // segmentum cervicale medullae spinalis
-const
-                   { Short description for word categories }
-  cWordShort:      Array[ tWordCateg ] of string = (
-                   'n',
-                   'a',
-                   'c',
-                   'o',
-                   'k',
-                   'm',
-                   'p',
-                   'i',
-                   'h',
-                   's' );
+                   ( 0, 0 ) );
 
-                   { Long description for word categories }
-  cWordDescr:      Array[ tWordCateg ] of string = (
-                   'noun',
-                   'adjective',
-                   'comparative adjective',
-                   'ordinal adjective',
-                   'modal prefix',
-                   'prefix',
-                   'present participle',
-                   'invariant acronym',
-                   'main placeholder',
-                   'second placeholder' );
+                   // Test of synonym expansion
+  cSynChExpLA:     tSynChExpLA = (
+                   ( 9275, 9275 ),     // segmentum anterius hippocampi
+                   ( 0, 0 ) );
 
-                   { Link texts for word categories }
-  cLinkDescr:      Array[ tWordCateg ] of string = (
-                   'Cpl',
-                   'Adj',
-                   'Comp',
-                   'Ord',
-                   'Modal',
-                   'Morpho',
-                   'PPres',
-                   'Inv',
-                   'Holder',
-                   'MoreH' );
-
-                   { Short description for word gender }
-  cGenderShort:    Array[ tWordGender ] of String = (
-                   'm',
-                   'f',
-                   'n' );
-
-                   { Long description for word gender }
-  cGenderDescr:    Array[ tWordGender ] of String = (
-                   'masculine',
-                   'feminine',
-                   'neutral' );
-
-                   { Short description for word number }
-  cNumberShort:    Array[ tWordNumber ] of String = (
-                   's',
-                   'p' );
-
-                   { Long description for word number }
-  cNumberDescr:    Array[ tWordNumber ] of String = (
-                   'singular',
-                   'plural' );
-
-                   { Short description for word case }
-  cCaseShort:      Array[ tWordCase ] of String = (
-                   'n',
-                   'g' );
-
-                   { Long description for word case }
-  cCaseDescr:      Array[ tWordCase ] of String = (
-                   'nominative',
-                   'genitive' );
-
-                   { *  * }
-  cModalList:      Array[ 1 .. NbPrefix ] of String = (
-                   'sub', 'para', 'peri', 'pre', 'supra',
-                   'hemi', 'semi', 'post', 'epi', 'extra',
-                   'inter', 'intra', 'juxta' );
-
-                   { * Values for tripple word type - case - number * }
-  cTTCNValue:      Array[ tTCN ] of String = (
-                   'nul', 'nns', 'ngs', 'nnp', 'ngp',
-                   'ans', 'ags', 'anp', 'agp', 'cla' );
-
-                   // Lateral values
-  cLatSin:         Array[ tLatType ] of String = (
-                   '',                       // undefined value
-                   'sinister',               // left masc nom sing
-                   'sinistri',               // left masc gen sing
-                   'sinistri',               // left masc nom plur
-                   'sinistrorum',            // left masc gen plur
-                   'sinistra',               // left fem nom sing
-                   'sinistrae',              // left fem gen sing
-                   'sinistrae',              // left fem nom plur
-                   'sinistrarum',            // left fem gen plur
-                   'sinistrum',              // left neuter nom sing
-                   'sinistri',               // left neuter gen sing
-                   'sinistra',               // left neuter nom plur
-                   'sinistrorum' );          // left neuter gen plur
-  cLatDex:         Array[ tLatType ] of String = (
-                   '',                       // undefined value
-                   'dexter',                 // right masc nom sing
-                   'dextri',                 // right masc gen sing
-                   'dextri',                 // right masc nom plur
-                   'dextrorum',              // right masc gen plur
-                   'dextra',                 // right fem nom sing
-                   'dextrae',                // right fem gen sing
-                   'dextrae',                // right fem nom plur
-                   'dextrarum',              // right fem gen plur
-                   'dextrum',                // right neuter nom sing
-                   'dextri',                 // right neuter gen sing
-                   'dextra',                 // right neuter nom plur
-                   'dextrorum' );            // right neuter gen plur
-
-                   { * Transition matrix *
-                   Description:
+                   // Transition matrix for parser
+                   // ============================
+                   { Description:
                    This matrix allows transitions from any state TCN to another
                    state, this regulating the well-formed terms in Latin TA.<P>
                    Matrix[ x, y ] is true if a transition from state x to
-                   state y is allowed, x and y being of type TTCN.<P>
+                   state y is allowed, x and y being of type tTCN.<P>
                    The transition sns to sns is for juxtaposition of two
                    substantives like musculus sphincter.<P> }
-  cMatrix:         TMatrix = (
+  cMatrix:         tMatrix = (
 {  nul    sns    sgs    snp    sgp    ans    ags    anp    agp    cla  }
 ( False, True,  True,  True,  True,  True,  False, False, False, True  ), // nul
 ( False, True,  True,  False, True,  True,  False, False, False, False ), // sns
@@ -541,8 +326,8 @@ const
 function           NextWord(
                      Term: String;
                      ACode: String;
-                     PastState: TTCN;
-                     MainState: TTCN;
+                     PastState: tTCN;
+                     MainState: tTCN;
                      PastGender: String;
                      MainGender: String;
                      PastNumber: String;
@@ -550,7 +335,7 @@ function           NextWord(
                      IsAdj: Boolean;
                      var IsMain: Boolean;
                      var NbLine: Integer;
-                     var Cells: TCells )
+                     var Cells: tCells )
                      : Boolean;
                    { * Search for word form in dictionary * }
 function           WordExists(
@@ -617,12 +402,6 @@ function           TestNounPluralLA(
                      var IsRule: Boolean;
                      var Ident: Integer )
                      : String;
-
-var
-                   { * Total number of entries in Latin dictionary * }
-  TotCas:          Integer;
-                   { * Dynamic array for storage of Latin dictionary * }
-  Latin:           Array of LatinRec;
 
 implementation
 
@@ -1115,7 +894,6 @@ begin
   // Loop on all Latin forms (linear search, not optimized)
   Lgt := LgtInit;
   NbForm := 0;
-  Count := 0;
   SetLength( Locs, LgtInit );
   SetLength( Codes, LgtInit );
   for Indx := 0 to TotCas - 1 do
@@ -1151,7 +929,7 @@ begin
              ( MyCod[ 1 ] = cWordShort[ wt_inv ] ) then
             Codes[ NbForm ] := cWordShort[ wt_adj ] + MyCod[ 4 ] + MyCod[ 5 ];
           if Indy = TotCas - 1 then
-            break;
+            Break;
           Inc( NbForm );
           if ( NbForm >= Lgt ) then
           begin
@@ -1162,6 +940,7 @@ begin
           end;
           Inc( Indy );
         end; // while
+        Indy := Indy;
       end;
 
       // Sort identical forms on adjective/noun, sing/plur, nominative/genitive
@@ -1193,7 +972,11 @@ begin
           end;
         end; // for
       end; // for
-
+      if ( NbForm = 1 ) then
+      begin
+        Loc[ 0 ] := Locs[ 0 ];
+        Count := 1;
+      end;
       Break;
     end;
   end; // for
@@ -1700,7 +1483,7 @@ var
 begin
   Result := AWord;
 
-  // Apply the exceptions for feminine adjectives
+  // Apply the exceptions for neuter adjectives
   for Indx := 1 to NbNeuAdjExcept do
   begin
     if ( cNeuAdjExcept[ Indx, 1 ] = AWord ) then
@@ -1710,7 +1493,7 @@ begin
     end;
   end;
 
-  // Apply the rules for feminine adjectives
+  // Apply the rules for neuter adjectives
   for Indx := 1 to NbNeuAdj do
   begin
     Len := Length( cNeuAdj[ Indx, 1 ] );
@@ -1779,6 +1562,7 @@ var
   Truc:            WordAnal;
   ListInt:         tListInt;
   MyLex:           tLexType;
+  AdjCase:         tAdjCase;
 begin
 
   // Loop on all contributions of the formula
@@ -1835,21 +1619,21 @@ begin
       lx_Noun:
         begin
           MyWord := LexEntity.GetVocabulary( lt_Latin, st_Nou );
-          MyCode := 'nxxxx';
+          MyCode := 'nxxnx';
         end;
 
       // Retrieval of a noun complement
       lx_Compl:
         begin
           MyWord := LexEntity.GetVocabulary( lt_Latin, st_Nou );
-          MyCode := 'nxxxx';
+          MyCode := 'nxxgx';
         end;
 
       // Retrieval of an adjective
       lx_Adj:
         begin
           MyWord := LexEntity.GetVocabulary( lt_Latin, st_Adj );
-          MyCode := 'axxxx'
+          MyCode := 'axxnx'
         end;
 
       // Retrieval of a prefix
@@ -1906,40 +1690,49 @@ begin
             LID := Latin[ ListInt[ 0 ] ].LID;
             MakeSingleLACase( LID, 'gs', GenWord );
             ANode.Lem := GenWord;
+            ANode.Wrd := GenWord;
             ANode.Cod := Copy( Latin[ ListInt[ 0 ] ].Cod, 1, 3 ) + 'gs';
           end else
+          begin
             ANode.Lem := MyWord;
+            ANode.Wrd := MyWord;
+          end;
         end else
 
         // Management of an adjective: find the expected gender
         if ( MyType = 'A' ) then
         begin
           NbList := 0;
-          if ( (WordExists( MyWord, NbList, ListInt ) ) and
+          if ( ( WordExists( MyWord, NbList, ListInt ) ) and
                ( NbList > 0 ) ) then
           begin
-            Plus := 0;
+            Plus := 1;
             if ( NounGender = 'f' ) then
-              Plus := 1
+              Plus := 5
             else
             if ( NounGender = 'n' ) then
-              Plus := 2;
+              Plus := 9;
             PosList := 0;
-            for Indy := 0 to NbList do
+            for Indy := 0 to NbList - 1 do
             begin
               if ( Copy( Latin[ ListInt[ Indy ] ].Cod, 3, 3 ) = 'mns' ) then
               begin
                 PosList := Indy;
                 Break;
               end;
-            end; // for
-            LID := Latin[ ListInt[ PosList ] ].LID + Plus;
-            MakeSingleLACase( LID, 'ns', GenWord );
-            ANode.Lem := GenWord;
-            ANode.Cod := 'a' + Latin[ ListInt[ PosList ] + Plus ].Cod[ 2 ] +
+            end; // for on all lists
+            GetAdjectiveLA( MyWord, AdjCase );
+            GenWord := AdjCase[ Plus ];
+            LID := Latin[ ListInt[ PosList ] ].LID;
+            ANode.Lem := MyWord;
+            ANode.Wrd := GenWord;
+            ANode.Cod := 'a' + Latin[ ListInt[ PosList ] ].Cod[ 2 ] +
                          NounGender + 'ns';
           end else
+          begin
             ANode.Lem := MyWord;
+            LID := 0;
+          end;
         end else
 
         // Management of a noun
@@ -1956,10 +1749,15 @@ begin
               NounGender := Latin[ ListInt[ 0 ] ].Cod[ 3 ]
           end;
           ANode.Lem := MyWord;
+          ANode.Wrd := MyWord;
         end else
 
         // Management of a prefix
+        begin
           ANode.Lem := MyWord;
+          ANode.Wrd := MyWord;
+        end;
+
         ANode.LID := IntToStr( LID );
         Self.Node[ Indx ] := ANode;
       end else
@@ -2064,7 +1862,7 @@ begin
       GenAdj := MyAdj;
       Result := ge_masculine;
     end;
-    MyNode.Lem := GenAdj;
+    MyNode.Wrd := GenAdj;
     MyNode.Cod := 'ax' + MyCode;
     Self.Node[ Indx ] := MyNode;
   end; // for on all adjectives
@@ -2145,6 +1943,9 @@ var
 begin
   MyNode := Self.Node[ 0 ];
   MyCode := MyNode.Cod;
+  Result := gd_mas;
+  if ( MyCode = cEmpty ) then
+    Exit;
   if ( ( MyCode[ 1 ] = 'h' ) or ( MyCode[ 1 ] = 's' ) ) then
   begin
     MyNode := Self.Node[ 1 ];
@@ -2152,7 +1953,6 @@ begin
   end;
 
   // Retrieve gender
-  Result := gd_mas;
   if ( MyCode[ 3 ] = 'f' ) then
     Result := gd_fem
   else
@@ -2165,6 +1965,7 @@ function           tLatinTerm.MakeGenitiveLA()
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakeGenitiveLA
   * Construction of a genitive singular Latin term *
   Description:
+  The genitive term is built in the accompanying NodeGS structure.</p>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
   Indx:            Integer;
@@ -2188,6 +1989,8 @@ begin
     NbAnal := Self.NbWord;
     for Indx := 0 to NbAnal - 1 do
     begin
+      if ( Self.Node[ Indx ].Cod = cEmpty ) then
+        Continue;
 
       // Discard the place holders
       if ( ( Self.Node[ Indx ].Cod[ 1 ] = 'h' ) or
@@ -2206,7 +2009,7 @@ begin
       begin
         if ( not IsPrefix ) then
           NewTerm := NewTerm + cSpace;
-        NewTerm := NewTerm + Self.Node[ Indx ].Lem;
+        NewTerm := NewTerm + Self.Node[ Indx ].Wrd;
         Self.NodeGS[ Indx ] := Self.Node[ Indx ];
         IsPrefix := True;
         Continue;
@@ -2222,7 +2025,8 @@ begin
         NewTerm := NewTerm + GenWord;
         MyCell.Cod := Copy( Self.Node[ Indx ].Cod, 1, 3 ) + 'g' +
                       Copy( Self.Node[ Indx ].Cod, 5, 1 );
-        MyCell.Lem := GenWord;
+        MyCell.Wrd := GenWord;
+        MyCell.Lem := Self.Node[ Indx ].Lem;
         MyCell.LID := Self.Node[ Indx ].LID;
         Self.NodeGS[ Indx ] := MyCell;
       end else
@@ -2256,22 +2060,24 @@ function           tLatinTerm.MakePluralLA(
     - If the word is at nominative, it is transformed to plural by consultation
       of the Latin case dictionary;
     - If the word is not at nominative, it is left unchanged.</p>
+  The plural term is built in the accompanying NodeGS structure.</p>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
-  Indx:            Integer;
-  NbAnal:          Integer;
-  Plus:            Integer;
-  IsPrefix:        Boolean;
-  IsNom:           Boolean;
-  Decl:            String;
-  NewTerm:         String;
-  GenWord:         String;
-  MyNodeType:      char;
-  Gender:          tWordGender;
+  Indx:            Integer;            // Index on all syntax parts
+  NbAnal:          Integer;            // Number of syntax parts
+  Plus:            Integer;            //
+  IsPrefix:        Boolean;            // Presence of a prefix
+  IsNom:           Boolean;            // Flag for nominative part
+  Decl:            String;             // Applicable declension
+  NewTerm:         String;             // Reconstructed term at plural
+  GenWord:         String;             // Generated new word
+  MyNodeType:      Char;               // Type of word for a node
+  Gender:          tWordGender;        // Gender of word for a node
+  AdjCase:         tAdjCase;           // All adjectives in declension
+  MyCell:          WordAnal;           // Single node
 begin
 
   // Loop on all words to generate the plural form
-  NewTerm := Self.Nominative;
   if ( Self.IsRegular ) then
   begin
     Gender := Self.GetGenderLA;
@@ -2281,6 +2087,8 @@ begin
     NbAnal := Self.NbWord;
     for Indx := 0 to NbAnal - 1 do
     begin
+      if ( Self.Node[ Indx ].Cod = cEmpty ) then
+        Continue;
       MyNodeType := Self.Node[ Indx ].Cod[ 1 ];
 
       // Check for prefixes
@@ -2291,14 +2099,9 @@ begin
         if ( not IsPrefix ) then
           NewTerm := NewTerm + cSpace;
         NewTerm := NewTerm + Self.Node[ Indx ].Lem;
+        Self.NodeGS[ Indx ] := Self.Node[ Indx ];
         IsPrefix := True;
         Continue;
-      end else
-
-      // Skip lateral adjectives
-      if ( ( MyNodeType = 'h' ) or ( MyNodeType = 's' ) ) then
-      begin
-        Continue
       end else
 
       // Ckeck other words
@@ -2308,27 +2111,63 @@ begin
         IsNom := ( Self.Node[ Indx ].Cod[ 4 ] = 'n' );
         if ( IsNom ) then
         begin
-          Plus := 0;
+
+          // Handling of adjectives
           if ( MyNodeType = 'a' ) then
           begin
-            if ( Gender = gd_fem ) then
-              Plus := 1
-            else
-            if ( Gender = gd_neu ) then
-              Plus := 2;
+            case Gender of
+              gd_mas: Plus := 3;
+              gd_fem:  Plus := 7;
+              gd_neu:  Plus := 11;
+            end; // case
+            GetAdjectiveLA( Self.Node[ Indx ].Lem, AdjCase );
+            GenWord := AdjCase[ Plus ];
+          end else
+
+          // Handling og placeholders
+          if ( ( MyNodeType = 'h' ) or ( MyNodeType = 's' ) ) then
+          begin
+            case Gender of
+              gd_mas: Plus := 3;
+              gd_fem:  Plus := 7;
+              gd_neu:  Plus := 11;
+            end; // case
+            GetAdjectiveLA( 'xter', AdjCase );
+            GenWord := cEmpty; // 'xtri'; // AdjCase[ Plus ];
+          end else
+
+          // Handling of nouns
+          if ( MyNodeType = 'n' ) then
+          begin
+            Decl := 'np';
+            MakeSingleLACase( StrToInt( Self.Node[ Indx ].LID ),
+                              Decl, GenWord );
           end;
-          MakeSingleLACase( StrToInt( Self.Node[ Indx ].LID ) + Plus,
-                            Decl, GenWord );
-          if ( not IsPrefix ) then
-            NewTerm := NewTerm + cSpace;
-          NewTerm := NewTerm + GenWord;
+
+          // Generate the new contribution at plural
+          if ( ( MyNodeType <> 'h' ) and ( MyNodeType <> 's' ) ) then
+          begin
+            if ( not IsPrefix ) then
+              NewTerm := NewTerm + cSpace;
+            NewTerm := NewTerm + GenWord;
+          end;
+          MyCell := Self.Node[ Indx ];
+          MyCell.Cod := Copy( Self.Node[ Indx ].Cod, 1, 4 ) + 'p';
+          MyCell.Wrd := GenWord;
+          MyCell.Lem := Self.Node[ Indx ].Lem;
+          MyCell.LID := Self.Node[ Indx ].LID;
+          Self.NodeGS[ Indx ] := MyCell;
         end else
 
         // Genitive part remains unchanged
         begin
-          if ( not IsPrefix ) then
-            NewTerm := NewTerm + cSpace;
-          NewTerm := NewTerm + Self.Node[ Indx ].Lem;
+          if ( not Self.IsOption ) then
+          begin
+            if ( not IsPrefix ) then
+              NewTerm := NewTerm + cSpace;
+            NewTerm := NewTerm + Self.Node[ Indx ].Wrd;
+            Self.NodeGS[ Indx ] := Self.Node[ Indx ];
+          end;
         end;
       end;
       IsPrefix := False;
@@ -2404,7 +2243,7 @@ function           tLatinTerm.MakeLateralLA(
   Description:
   This method builds a lateral nominative term by addition of the adequate
   lateral adjective to the nominative term. Two situations are possible
-  according to the IsShort parameter: standard placeholeder ans short
+  according to the IsShort parameter: standard placeholeder and short
   placeholder.</p>
   At first, a place holder for the lateral adjective is searched. When found,
   the syntax of lateral adjective is computed and used to build the value of
@@ -2504,7 +2343,7 @@ begin
         NewTerm := NewTerm + cSpace
       else
         IsPrefix := False;
-      NewTerm := NewTerm + Self.Node[ Indx ].Lem;
+      NewTerm := NewTerm + Self.Node[ Indx ].Wrd;
     end;
   end; // for on all words of the initial term
   Result := Trim( NewTerm );
@@ -2546,7 +2385,7 @@ begin
     if ( Self.Node[ Indx ].Cod[ 1 ] = 'h' ) then
     begin
       Argument := Copy( Self.Node[ Indx ].Cod, 3, 5 );
-      MySyntax := SyntaxOf( Argument );
+      MySyntax := Succ( Succ( SyntaxOf( Argument ) ) );
       Break;
     end;
   end;
@@ -2581,7 +2420,7 @@ begin
     begin
       if ( not IsPrefix ) then
         NewTerm := NewTerm + cSpace;
-      NewTerm := NewTerm + Self.Node[ Indx ].Lem;
+      NewTerm := NewTerm + Self.Node[ Indx ].Wrd;
       IsPrefix := True;
       Continue;
     end else
@@ -2592,7 +2431,7 @@ begin
       if ( Self.Node[ Indx ].Cod[ 4 ] = 'n' ) then
         MakeSingleLACase( StrToInt( Self.Node[ Indx ].LID ), 'np', MyWord )
       else
-        MyWord := Self.Node[ Indx ].Lem;
+        MyWord := Self.Node[ Indx ].Wrd;
 
       // Append each word
       if ( not IsPrefix ) then
@@ -2671,6 +2510,13 @@ begin
       NewTerm := NewTerm + Self.Node[ Indx ].Wrd;
       IsPrefix := True;
       Continue;
+    end else
+
+    // Check for lateral placeholders
+    if ( ( Self.Node[ Indx ].Cod[ 1 ] = 'h' ) or
+         ( Self.Node[ Indx ].Cod[ 1 ] = 's' ) ) then
+    begin
+      Continue;
     end;
 
     // Change nominative word to genitive plural
@@ -2707,8 +2553,8 @@ procedure          tLatinTerm.ProcessATerm();
   - missing word form in the Latin dictionnary,
   - non agreement to the transition matrix (check for number and case),
   - non agreement to the gender rule between adjective and noun.
-  In all cases the result flag is set to false.<P>
-  The analysis is performed by recursive call on procedure NextWord until
+  In all cases of failure, the result flag is set to false.<P>
+  The analysis is performed by recursive call to the procedure NextWord until
   the term is exhausted.<P>
   The elected solution is necessarily the first found solution. It may happen
   that more than one valid solution exist. They are ignored in the present
@@ -2900,88 +2746,107 @@ begin
 end; // _______________________________________________________________GetNounLA
 
 function           tLatinTerm.MakeMandatLA(
-  MyTerm:          tSingle )
-  :                Boolean;
+  MyTerm:          tSingle )           // Single of the expansion term
+  :                Boolean;            // Flag of successful result
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakeMandatLA
   * Make the mandatory part of a Latin term *
   Description:
-  This procedure defines the mandatory part specified by the TID argument.</p>
+  This procedure defines the mandatory part specified by the argument.</p>
   The part to be added is a Latin term at nominative that is supposed to be
-  regular.The genitive is computed and then added at the right of the
+  regular. The genitive is computed and then added at the right of the
   initial term.</p>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
   Indx:            Integer;            // Index on all genitive words
   NbWordGS:        Integer;            // Number of genitive words
   Past:            Integer;            // Number of initial words
-  NbSingle:        Integer;            // Number of singles in generating entity
-  MyGenitive:      String;             //
+  MyGenitive:      String;             // Genitive text of the expansion
   MyLATerm:        tLatinTerm;         // Applicable term
 begin
 
-  // Build the genitive
+  // Retrieve the Latin term
   Past := Self.NbWord;
   MyLATerm := tLatinTerm( MyTerm.LgTerm );
   if ( MyLATerm = nil ) then
   begin
     Result := False;
-    MyTerm.SetError( 999 );
+    MyTerm.SetError( 990 );
     Exit;
   end;
-  MyGenitive := Trim( MyLATerm.Genitive );
 
-  // Adjust the syntax of owner French term
+  // Compute the genitive
+  MyGenitive := Trim( MyLATerm.Genitive );
   NbWordGS := MyLATerm.NbWord;
+  if ( NbWordGS = 0 ) then
+  begin
+    Result := False;
+    MyTerm.SetError( 991 );
+    Exit;
+  end;
+
+  // Adjust the syntax of owner Latin term
   for Indx := 0 to NbWordGS - 1 do
   begin
     Self.Node[ Indx + Past ] := MyLATerm.NodeGS[ Indx ];
   end; // for on all genitive words
-  MyTerm.Mandat := MyGenitive;
+
+  // Return the result
+  Self.NewNom := Self.Nominative + cSpace + MyGenitive;
   Result := True;
 end; // ____________________________________________________________MakeMandatLA
 
 function           tLatinTerm.MakeOptionLA(
-  MyTerm:          tSingle )
-  :                Boolean;
+  MyTerm:          tSingle )           // Single of optional expansion
+  :                Boolean;            // Flag of success
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakeOptionLA
-  * Make the mandatory part of a Latin term *
+  * Make the optional part of a Latin term *
   Description:
-  This procedure defines the mandatory part specified by the TID argument.</p>
+  This procedure sets ups the optional part specified by the argument.</p>
   The part to be added is a Latin term at nominative that is supposed to be
   regular.The genitive is computed and then added at the right of the
   initial term.</p>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
-  Indx:            Integer;            // Index on all genitive words
+  Indx:            Integer;            // Index on genitive words
   NbWordGS:        Integer;            // Number of genitive words
   Past:            Integer;            // Number of initial words
-  NbSingle:        Integer;            // Number of singles in generating entity
-  MyGenitive:      String;             //
-  MandatEntity:    tEntity;            // Generating entity of expansion
+  MyGenitive:      String;             // Genitive text of the expansion
   MyLATerm:        tLatinTerm;         // Applicable term
 begin
 
-  // Build the genitive
+  // Retrieve the Latin term
   Past := Self.NbWord;
   MyLATerm := tLatinTerm( MyTerm.LgTerm );
   if ( MyLATerm = nil ) then
+  begin
+    Result := False;
     Exit;
-  MyGenitive := Trim( MyLATerm.Genitive );
+  end;
 
-  // Adjust the syntax of owner French term
+  // Compute the genitive
+  MyGenitive := Trim( MyLATerm.Genitive );
   NbWordGS := MyLATerm.NbWord;
+  if ( NbWordGS = 0 ) then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  // Adjust the syntax of owner Latin term
   for Indx := 0 to NbWordGS - 1 do
   begin
     Self.Node[ Indx + Past ] := MyLATerm.NodeGS[ Indx ];
   end; // for on all genitive words
+
+  // Return the result
   MyTerm.Mandat := MyGenitive;
   Result := True;
 end; // ____________________________________________________________MakeOptionLA
 
 function           tLatinTerm.MakeAdjectiveLA(
-  Adj:             String;
-  Pre:             String )
-  :                Boolean;
+  Adj:             String;             // Adjective to be inserted
+  Pre:             String )            // Prefix to be inserted
+  :                Boolean;            // Flag of success
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MakeAdjectiveLA
   * Insert an adjective of expansion in base term *
   Description:
@@ -3000,18 +2865,14 @@ var
   Indx:            Integer;
   NbWord:          Integer;
   NounPos:         Integer;
-  AdjPos:          Integer;
   NbShift:         Integer;
   NbPlus:          Integer;            // Number of words before the noun
   MyWord:          String;
   MyTerm:          String;
   SyntaxNoun:      String;
   MyGender:        String;
-  AGender:         tWordGender;
-  MyNode:          WordAnal;
   NewWord:         WordAnal;
   NewPref:         WordAnal;
-  MyMandat:        tLatinTerm;
   AdjCase:         tAdjCase;
 begin
 
@@ -3020,6 +2881,8 @@ begin
   NounPos := 0;
   for Indx := 0 to NbWord - 1 do
   begin
+    if ( Self.Node[ Indx ].Cod = cEmpty ) then
+      Continue;
     if ( Self.Node[ Indx ].Cod[ 1 ] = 'n' ) then
     begin
       NounPos := Indx;
@@ -3067,7 +2930,7 @@ begin
     NewWord.Wrd := AdjCase[ 5 ]
   else
   if ( MyGender = 'n' ) then
-    NewWord.Lem := AdjCase[ 9 ];
+    NewWord.Wrd := AdjCase[ 9 ];
   NewWord.LID := AdjCase[ 13 ];
 
   // Move the new adjective (and prefix)
@@ -3082,7 +2945,7 @@ begin
   MyTerm := cEmpty;
   for Indx := 0 to NbWord - 1 do
   begin
-    MyWord := Self.Node[ Indx ].Lem;
+    MyWord := Self.Node[ Indx ].Wrd;
     if ( Self.Node[ Indx ].Cod[ 1 ] = 'p' ) then
       MyTerm := MyTerm + MyWord
     else
@@ -3093,8 +2956,8 @@ begin
 end; // _________________________________________________________MakeAdjectiveLA
 
 function           tLatinTerm.SetBaseLA(
-  TID:             Integer )
-  :                Boolean;
+  TID:             Integer )           // TID of predefined exception
+  :                Boolean;            // Fllag of success
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SetBaseLA
   * Set a base term after expansion *
   Description:
@@ -3107,7 +2970,7 @@ function           tLatinTerm.SetBaseLA(
   At second, the placeholder is built and inserted in its place.</p>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
-  Indx:            Integer;            // Index
+  Indx:            Integer;            // Index on all syntax parts
   PosWord:         Integer;            // Position of bilateral placeholder
   Syntax:          String;             // Syntax for placeholder
   MyCell:          WordAnal;           // Placeholder cell
@@ -3119,12 +2982,15 @@ begin
   PosWord := Self.NbWord;
   for Indx := 0 to Self.NbWord - 1 do
   begin
+    if ( Self.Node[ Indx ].Cod = cEmpty ) then
+      Continue;
     if ( ( Self.Node[ Indx ].Cod[ 1 ] = 'n' ) and
          ( Self.Node[ Indx ].Cod[ 4 ] = 'n' ) ) then
     begin
       Syntax := Self.Node[ 0 ].Cod[ 3 ] + 'n' + Self.Node[ 0 ].Cod[ 5 ];
     end else
-    if ( Self.Node[ Indx ].Cod[ 4 ] <> 'n' ) then
+    if ( ( Self.Node[ Indx ].Cod[ 4 ] <> 'n' ) and
+         ( Self.Node[ Indx ].Cod[ 4 ] <> 'x' ) ) then
     begin
       PosWord := Indx;
       Break;
