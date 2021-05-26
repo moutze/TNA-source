@@ -39,6 +39,7 @@ type
     fNbw:                    Integer;            // number of nominative words
     fNum:                    tNumber;            // number of the term !
     fLat:                    String;             // lateral term
+    fOpt:                    Boolean;            // flag for optional expansion
                              // Make the nominative plural form
     function                 MakePlural
                                : String;
@@ -140,6 +141,8 @@ type
     property WordsNom:       Integer read fNbw write fNbw;
                              // Number of the term: singular or plural
     property Number:         tNumber read fNum write fNum;
+                             // Flag for optional expansion
+    property IsOption:       Boolean read fOpt write fOpt;
                              // Standard constructor with initial values
     constructor              Create();
                                overload;

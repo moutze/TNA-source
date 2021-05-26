@@ -228,14 +228,13 @@ const
                    ( 0, 0 ) );
 
                    // Test of adjective expansion
-                   // First TID: st_mod; second TID: st_bas
   cAdjChExpEN:     tAdjChExpEN = (
+                   ( 7985, 33461 ),    // cervical segments of spinal cord
                    ( 4155, 4155 ),     // ulnar artery
                    ( 5792, 5792 ),     // habenular commissure
                    ( 7986, 7986 ),     // cervical segment 1
                    ( 6985, 6985 ),     // superior temporal retinal arteriole
                    ( 8415, 8415 ),     // hypothalamospinal tract
-                   ( 33461, 33461 ),   // cervical segments of spinal cord
                    ( 6281, 6281 ),     // horizontal occipital fasciculi
                    ( 11830, 11830 ),   // vertical temporoparietal fasciculus
                    ( 0, 0 ) );
@@ -608,6 +607,7 @@ begin
   begin
     MyCell := Self.Node[ Indx - 1 ];
     MyCell.Cod := Copy( MyCell.Cod, 1, 3 ) + 'g' + MyCell.Cod[ 5 ];
+    MyCell.Wrd := MyCell.Lem;
     Self.NodeGS[ Indx ] := MyCell;
   end;
   MyCell.Lem := 'of';

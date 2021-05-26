@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.984,C:\Users\Robert\Documents\RAD Studio\Projets\ProjectGroup1.groupproj=C:\Users\Robert\Documents\MyTAH\TAH Delphi\TNA Dev\ProjectGroup1.groupproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.539,C:\Users\Robert\Documents\MyTAH\TAH Delphi\TNA Dev\ProjectGroup1.groupproj=C:\Users\Robert\Documents\MyTAH\TAH Delphi\TNA Dev\TNA2021.groupproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.539,C:\Users\Robert\Documents\MyTAH\TAH Delphi\TNA Dev\TNA2021.groupproj=C:\Users\Robert\Documents\MyTAH\TAH Delphi\TNA Dev\ProjectGroup1.groupproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.984,C:\Users\Robert\Documents\MyTAH\TAH Delphi\TNA Dev\ProjectGroup1.groupproj=C:\Users\Robert\Documents\RAD Studio\Projets\ProjectGroup1.groupproj</Transaction>
   </Transactions>
 	<Default.Personality>
-		<Projects ActiveProject="C:\Users\Robert\Documents\MyTAH\TAH Delphi\TNA Dev\TNA2021.dproj"/>
+		<Projects ActiveProject="C:\Users\Robert\Documents\MyTAH\TAH Delphi\TNA-source\TNA2021.dproj"/>
 	</Default.Personality>
 </BorlandProject>

@@ -72,12 +72,6 @@ type
                                IsTax: Boolean;
                                var CurrentNode: TTreeNode );
   end;
-                             // Record for FixTrad
-  FixTradRec                 = record
-    TID:                     Integer;
-    Pos:                     Integer;
-    Syntax:                  String;
-  end;
 
                              // The class of the visual interface to TAHDev
   tTHAHierarForm             = class( TForm )
@@ -191,6 +185,8 @@ type
     subOptExpansion:         TMenuItem;
     subLatExpansion:         TMenuItem;
     subNoExpansion:          TMenuItem;
+    subAllExpansions:        TMenuItem;
+    LanguageBox:             TComboBox;
 
                              // Initial load of data
     procedure                FormCreate(
@@ -377,8 +373,6 @@ type
                                Sender: TObject );
     procedure                subIntLevel4Click(
                                Sender: TObject );
-    procedure                mnuEntityPageClick(
-                               Sender: TObject );
     procedure                subMandExpansionClick(
                                Sender: TObject );
     procedure                subOptExpansionClick(
@@ -386,6 +380,12 @@ type
     procedure                subLatExpansionClick(
                                Sender: TObject );
     procedure                subNoExpansionClick(
+                               Sender: TObject );
+    procedure                LanguageBoxSelect(
+                               Sender: TObject );
+    procedure                mnuTALanguageClick(
+                               Sender: TObject );
+    procedure                subAllExpansionsClick(
                                Sender: TObject );
   end;
 
@@ -440,9 +440,6 @@ var
   Concord:         Array of ConcordRec;
                    // Number of concordance entries
   TotConcord:      Integer;
-                   //
-  DisLang:         tDisLang;
-
 implementation
 
 {$R *.dfm}
@@ -461,6 +458,7 @@ procedure          tTHAHierarForm.FormCreate(
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
   FileName:        String;
+  LgComb:          tLgComb;
 begin
   // Create global objects
   TAH := tTAH.Create;
@@ -472,30 +470,12 @@ begin
   TAH.FMAs := tFMA.Create;
   TAH.InitFilenames;
 
-  // Set the languages:
-  // main language, subsidiary language and interface language
+  // Set the languages: select any default option
+  // Main language, subsidiary language and interface language
   // applicable to all generated pages.
-  TAH.MainLang := lt_Latin; TAH.SubstLang := lt_English; TAH.DisLanguage := lt_English;
-  // TAH.MainLang := lt_Latin; TAH.SubstLang := lt_French; TAH.DisLanguage := lt_English;
-  // TAH.MainLang := lt_Latin; TAH.SubstLang := lt_Spanish; TAH.DisLanguage := lt_English;
-  // TAH.MainLang := lt_Latin; TAH.SubstLang := lt_Russian; TAH.DisLanguage := lt_English;
-  // TAH.MainLang := lt_English; TAH.SubstLang := lt_Latin; TAH.DisLanguage := lt_English;
-  // TAH.MainLang := lt_French; TAH.SubstLang := lt_Latin; TAH.DisLanguage := lt_French;
-  // TAH.MainLang := lt_Spanish; TAH.SubstLang := lt_Latin; TAH.DisLanguage := lt_Spanish;
-  // TAH.MainLang := lt_Russian; TAH.SubstLang := lt_Latin; TAH.DisLanguage := lt_Russian;
-  // TAH.MainLang := lt_French;
-  // TAH.MainLang := lt_Spanish;
-  // TAH.MainLang := lt_English;
-  // TAH.MainLang := lt_Russian;
-  // TAH.SubstLang := lt_English;
-  // TAH.SubstLang := lt_Latin;
-  // TAH.SubstLang := lt_French;
-  // TAH.SubstLang := lt_Spanish;
-  // TAH.SubstLang := lt_Russian;
-  // TAH.DisLanguage := lt_English;
-  // TAH.DisLanguage := lt_French;
-  // TAH.DisLanguage := lt_Spanish;
-  // TAH.DisLanguage := lt_Russian;
+  LgComb := cb_RULARU;
+  TAH.LgCombination( LgComb );
+  LanguageBox.ItemIndex := Integer( LgComb ) - 1;
 
   // Load the units (formerly tetrahedrons) and create entities
   if ( FileExists( TAH.UnitFileName ) ) then
@@ -652,6 +632,20 @@ begin
   // TTAHTreeView( TAHHierar ).OpenHierarchy( 498, TAHTopNode );
 end; // ________________________________________________________________FormShow
 
+procedure          tTHAHierarForm.LanguageBoxSelect(
+  Sender:          TObject );
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ LanguageBoxSelect
+  * Select the applicable languages *
+  Description:
+  This procedure reacts to user selection of a new combination of languages.<P>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+var
+  LgComb:          tLgComb;
+begin
+  LgComb := tLgComb( LanguageBox.ItemIndex + 1 );
+  TAH.LgCombination( LgComb );
+end; // _______________________________________________________LanguageBoxSelect
+
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SearchTIDKeyPress
   * Entering a TID for opening of treeview *
   Description:
@@ -737,11 +731,11 @@ begin
   PopupMenu.Popup( TAHHierar.Left + X + 100, TAHHierar.Top + Y + 150);
 end; // _______________________________________________________TAHierarMouseDown
 
+procedure          tTHAHierarForm.mnuHTMLTA10Click(
+  Sender:          TObject );
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ mnuHTMLTA10Click
   * Handling of menu HTML TA10 *
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
-procedure          tTHAHierarForm.mnuHTMLTA10Click(
-  Sender:          TObject );
 begin
   //TA10FacSimilePage( TACurrIndex );
 end; // ________________________________________________________mnuHTMLTA10Click
@@ -790,7 +784,12 @@ procedure          tTHAHierarForm.mnuTA98subchapterClick(
   Sender:          TObject );
 begin
   TAH.MakeTA98subchapterPage( TAHCurrTID );
-end; // __________________________________________________mnuTA98subchapterClick
+end; procedure tTHAHierarForm.mnuTALanguageClick(Sender: TObject);
+begin
+
+end;
+
+// _______________________________________________________mnuTA98subchapterClick
 
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ mnuExcelByChapterClick
   * Handling of menu TA 2010 Excel by chapter *
@@ -970,7 +969,7 @@ procedure          tTHAHierarForm.mnuFrenchClick(
 begin
   LgCur := lt_French;
   mnuFrench.Checked := True;
-  TTAHTreeView( TAHHierar ).Reset( TAHTopNode );
+  tTAHTreeView( TAHHierar ).Reset( TAHTopNode );
 end; // __________________________________________________________mnuFrenchClick
 
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ mnuEnglishClick
@@ -982,12 +981,7 @@ begin
   LgCur := lt_English;
   mnuEnglish.Checked := True;
   TTAHTreeView( TAHHierar ).Reset( TAHTopNode );
-end; procedure tTHAHierarForm.mnuEntityPageClick(Sender: TObject);
-begin
-
-end;
-
-// _________________________________________________________mnuEnglishClick
+end; // _________________________________________________________mnuEnglishClick
 
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ mnuLatinClick
   * Handling of menu View TA language Latin *
@@ -1108,6 +1102,12 @@ begin
   TAH.MakeTestPage( te_OptExpansion );
 end; // ____________________________________________________subOptExpansionClick
 
+procedure          tTHAHierarForm.subAllExpansionsClick(
+  Sender:          TObject );
+begin
+  TAH.MakeTestPage( te_AllExpansions );
+end; // ___________________________________________________subAllExpansionsClick
+
 procedure          tTHAHierarForm.subAlltestsClick(
   Sender:          TObject );
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ subAlltestsClick
@@ -1141,7 +1141,7 @@ procedure          tTHAHierarForm.subEntityPageSingleClick(
 var
   Actual:         tEntity;
 begin
-  Actual := TAH.GetEntityByTID( 6191{TAHCurrTID} );
+  Actual := TAH.GetEntityByTID( 39146{TAHCurrTID} );
   if ( Actual <> nil ) then
     TAH.MakeEntityPage( Actual );
 end; // ________________________________________________subEntityPageSingleClick
@@ -1224,7 +1224,7 @@ begin
   if ( IsTA98 ) then
     TAH.MakeAnyPart98Page( 6877{TAHCurrTID}, li_TA98part2f )
   else
-    TAH.MakePartonomyPage( 5257{TAHCurrTID}, li_part2f );
+    TAH.MakePartonomyPage( 32919{TAHCurrTID}, li_part2f );
 end; // __________________________________________________subPartLevel2FullClick
 
 procedure          tTHAHierarForm.subPartLevel3Click(
@@ -1260,7 +1260,7 @@ begin
   if ( IsTA98 ) then
     TAH.MakeAnyPart98Page( TAHCurrTID, li_TA98part4 )
   else
-    TAH.MakeAnyPartonomyPage( 34126{TAHCurrTID}, li_part4 );
+    TAH.MakeAnyPartonomyPage( 32452{TAHCurrTID}, li_part4 );
 end; // ______________________________________________________subPartLevel4Click
 
 procedure          tTHAHierarForm.subQBatchUniversalClick(

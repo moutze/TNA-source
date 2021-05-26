@@ -218,6 +218,10 @@ type
                                MyTID: Integer;
                                var NbPos: Integer;
                                var MyPos: Array of Integer );
+                             // Decode the combination the languages
+    procedure                LgCombination(
+                               LgComb: tLgComb );
+
     // ===================== Build of data structures ==========================
                              // Initialize all filenames
     procedure                InitFilenames;
@@ -1538,6 +1542,117 @@ begin
   end; // for
 end; // _______________________________________________________GetPositionsByGen
 
+procedure          tTAH.LgCombination(
+  LgComb:          tLgComb );
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ LgCombination
+  * Decode the languages *   )
+  Description:
+  Depending on the value of the argument, this procedure defines the TAH
+  variables for the languages, applicable to all pages of the website:
+  - Main language or left colunmn (MainLang),
+  - Subsidiary language or right column (SubstLang),
+  - Display language for presentation (DisLanguage).</P>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+begin
+  // Decode the applicable languages
+  case LgComb of
+    cb_LAENEN:
+      begin
+        Self.MainLang := lt_Latin;
+        Self.SubstLang := lt_English;
+        Self.DisLanguage := lt_English;
+      end;
+    cb_LAFREN:
+      begin
+        Self.MainLang := lt_Latin;
+        Self.SubstLang := lt_French;
+        Self.DisLanguage := lt_English;
+      end;
+    cb_LAESEN:
+      begin
+        Self.MainLang := lt_Latin;
+        Self.SubstLang := lt_Spanish;
+        Self.DisLanguage := lt_English;
+      end;
+    cb_LARUEN:
+      begin
+        Self.MainLang := lt_Latin;
+        Self.SubstLang := lt_Russian;
+        Self.DisLanguage := lt_English;
+      end;
+    cb_ENLAEN:
+      begin
+        Self.MainLang := lt_English;
+        Self.SubstLang := lt_Latin;
+        Self.DisLanguage := lt_English;
+      end;
+    cb_FRLAFR:
+      begin
+        Self.MainLang := lt_French;
+        Self.SubstLang := lt_Latin;
+        Self.DisLanguage := lt_French;
+      end;
+    cb_ESLAES:
+      begin
+        Self.MainLang := lt_Spanish;
+        Self.SubstLang := lt_Latin;
+        Self.DisLanguage := lt_Spanish;
+      end;
+    cb_RULARU:
+      begin
+        Self.MainLang := lt_Russian;
+        Self.SubstLang := lt_Latin;
+        Self.DisLanguage := lt_Russian;
+      end;
+    cb_FRENFR:
+      begin
+        Self.MainLang := lt_French;
+        Self.SubstLang := lt_English;
+        Self.DisLanguage := lt_French;
+      end;
+    cb_ESENES:
+      begin
+        Self.MainLang := lt_Spanish;
+        Self.DisLanguage := lt_English;
+        Self.MainLang := lt_Spanish;
+      end;
+    cb_RUENRU:
+      begin
+        Self.MainLang := lt_Russian;
+        Self.SubstLang := lt_English;
+        Self.DisLanguage := lt_Russian;
+      end;
+    cb_FRESFR:
+      begin
+        Self.MainLang := lt_French;
+        Self.SubstLang := lt_Spanish;
+        Self.DisLanguage := lt_French;
+      end;
+    cb_FRRUFR:
+      begin
+        Self.MainLang := lt_French;
+        Self.SubstLang := lt_Russian;
+        Self.DisLanguage := lt_French;
+      end;
+  end; // case on all language combinations
+
+  // Other options
+  // Self.MainLang := lt_Latin;
+  // Self.MainLang := lt_English;
+  // Self.MainLang := lt_French;
+  // Self.MainLang := lt_Spanish;
+  // Self.MainLang := lt_Russian;
+  // Self.SubstLang := lt_Latin;
+  // Self.SubstLang := lt_English;
+  // Self.SubstLang := lt_French;
+  // Self.SubstLang := lt_Spanish;
+  // Self.SubstLang := lt_Russian;
+  // Self.DisLanguage := lt_English;
+  // Self.DisLanguage := lt_French;
+  // Self.DisLanguage := lt_Spanish;
+  // Self.DisLanguage := lt_Russian;
+end; // ___________________________________________________________LgCombination
+
 procedure          tTAH.InitFilenames;
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ InitFilenames
   * Initialize all filenames *
@@ -2254,7 +2369,7 @@ begin
     begin
       Posit := Pos( CurSep, Line );
       MyTID := StrToInt( Copy( Line, 1, Posit - 1 ) );
-      if ( MyTID = 7409 ) then
+      if ( MyTID = 28823 ) then
         MyTID := MyTID;
       if ( MyTID <> PastTID ) then
         MyEntity := Self.GetEntityByTID( MyTID );
