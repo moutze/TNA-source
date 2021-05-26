@@ -65,7 +65,7 @@ const
   reTestNounGender = 12662;            // Test noun gender
   reTestAdjGender  = 12696;            // Test adjective gender
   reTestNoExp      = 14368;            // Test of terms without expansion
-  reTestAllExp     = 14372;            // Test all expansions
+  reTestAllExp     = 14372;            // Test of terms for all expansions
 
                    // Libelles for Test Language sections (under 13199)
   reTestByDefault  = 13200;            // Test by default

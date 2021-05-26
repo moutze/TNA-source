@@ -1301,32 +1301,46 @@ procedure          tHTMLPage.WriteHeader(
 {<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ WriteHeader
   * Display the page header with title and help icon *
   Description:
-  This method writes the HTML header of a Page.</P>
+  This method writes the HTML header of the page. The following items are the
+  constituant parts of a page header:
+  - an introduction text to the page with language information,
+  - a bubble for introduction text,
+  - a title in main language,
+  - a bubble for title in subsidiary language,
+  - a help icon pointing to the help file of this type of page,
+  - a bubble for help icon.
+  All texts and bubbles but the titles are given in interface language.</P>
   The title font is possibly adjusted when the text is long.</P>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
-  Posit:           Integer;
-  MyHelpFile:      String;
-  MyTitle:         String;
-  MyShort:         String;
-  MyHelp:          String;
-  MySection:       tSection;
+  Posit:           Integer;  // Enf of text in title
+  MyIntro:         String;   // Introduction text of the page
+  MyIntroBubble:   String;   // Bubble for introduction text of the page
+  MyHelp:          String;   // Icon with link to help file on this page type
+  MyHelpBubble:    String;   // Bubble for help icon
+  MyTitle:         String;   // Visible title of the page in main language
+  MyShort:         String;   // Short title of the page
+  MyTitleBubble:   String;   // Bubble for title in subsidiary language
 begin
-  MyHelpFile := cEmpty;
+  MyIntro := Self.Header.Intro;
+  MyIntroBubble := Self.Header.Legend;
+  MyHelp := cEmpty;
   if ( not IsPub ) then
-    MyHelpFile := AOTAG + cHrefEmpty + Self.HelpDir + Self.HelpFileName +
+    MyHelp := AOTAG + cHrefEmpty + Self.HelpDir + Self.HelpFileName +
                   cDQuote + cAnr + Self.HelpIco + AETAG;
   MyTitle := Self.Header.Title;
   Posit := Pos( cAnl, MyTitle );
-  MyShort := Copy( MyTitle, 1, Posit - 2 );
+  MyShort := cEmpty;
+  if ( Posit > 0 ) then
+    MyShort := Copy( MyTitle, 1, Posit - 2 );
   if ( Length( MyShort ) > 45 ) then
     MyTitle := POTAG + cClassSmallFont + cAnr + MyTitle
   else
     MyTitle := PTAG + MyTitle;
-  MySection := tSection.Create;
-  MyHelp := TAH.GetLabel( reHelpOnPage );
-  MakeHeader700( Self.Header.Intro, Self.Header.Legend, MyTitle,
-                 Self.Header.Bubble, MyHelpFile, MyHelp, Lev );
+  MyTitleBubble := Self.Header.Bubble;
+  MyHelpBubble := TAH.GetLabel( reHelpOnPage );
+  MakeHeader700( MyIntro, MyIntroBubble, MyTitle, MyTitleBubble,
+                 MyHelp, MyHelpBubble, Lev );
 end; // _____________________________________________________________WriteHeader
 
 procedure          tHTMLPage.WriteFooter(
@@ -7224,8 +7238,8 @@ begin
       end;
     sc_TestNoExp:
       begin
-        MySection.SectionTitle := TAH.GetLabel( reTestNoExp );
-        MySection.SectionBubble := TAH.GetBubble( reTestNoExp );
+        MySection.SectionTitle := 'Controled test for terms without expansion';
+        MySection.SectionBubble := cEmpty;
         tTestSection( MySection ).Build;
       end;
     sc_TestAdjExp:

@@ -65,8 +65,9 @@
         <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <DCC_DcuOutput>C:\Users\Robert\Documents\MyTAH\TAH Delphi\TNA-source\Win64\Debug\</DCC_DcuOutput>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_ExeOutput>C:\Users\Robert\Documents\MyTAH\TAH Delphi\TNA Dev\Win64\Debug\</DCC_ExeOutput>
+        <DCC_ExeOutput>C:\Users\Robert\Documents\MyTAH\TAH Delphi\TNA-source\Win64\Debug\</DCC_ExeOutput>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     </PropertyGroup>

@@ -185,7 +185,7 @@ type
     subOptExpansion:         TMenuItem;
     subLatExpansion:         TMenuItem;
     subNoExpansion:          TMenuItem;
-    subAllExpansions:        TMenuItem;
+    subAllExpansionTests:    TMenuItem;
     LanguageBox:             TComboBox;
 
                              // Initial load of data
@@ -381,11 +381,11 @@ type
                                Sender: TObject );
     procedure                subNoExpansionClick(
                                Sender: TObject );
+    procedure                subAllExpansionTestsClick(
+                               Sender: TObject );
     procedure                LanguageBoxSelect(
                                Sender: TObject );
     procedure                mnuTALanguageClick(
-                               Sender: TObject );
-    procedure                subAllExpansionsClick(
                                Sender: TObject );
   end;
 
@@ -1102,11 +1102,14 @@ begin
   TAH.MakeTestPage( te_OptExpansion );
 end; // ____________________________________________________subOptExpansionClick
 
-procedure          tTHAHierarForm.subAllExpansionsClick(
+procedure          tTHAHierarForm.subAllExpansionTestsClick(
   Sender:          TObject );
+{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ subAllExpansionTestsClick
+  * Handling of menu for all expansion tests *
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 begin
   TAH.MakeTestPage( te_AllExpansions );
-end; // ___________________________________________________subAllExpansionsClick
+end; // _______________________________________________subAllExpansionTestsClick
 
 procedure          tTHAHierarForm.subAlltestsClick(
   Sender:          TObject );

@@ -611,6 +611,7 @@ begin
     Self.NodeGS[ Indx ] := MyCell;
   end;
   MyCell.Lem := 'of';
+  MyCell.Wrd := 'of';
   MyCell.Cod := 'rxxxx';
   Self.NodeGS[ 0 ] := MyCell;
 end; // __________________________________________________________MakeGenitiveEN

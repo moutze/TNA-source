@@ -1732,18 +1732,15 @@ function           tSingle.MakePluralGeneric
   via the language specific procedures.</P>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 var
-  Indx:            Integer;
-  Plus:            Integer;
-  IsPSet:          Boolean;
-  IsOpt:           Boolean;
-  NewTerm:         String;
-  NewValue:        String;
-  MyTerm:          String;
-  Actual:          tEntity;
-  Generator:       tEntity;
-  ATerm:           tSingle;
-  Term:            tTerm;
-  NewCateg:        tSynType;
+  Indx:            Integer;            // Index on syntax parts
+  IsOpt:           Boolean;            // Flag for optional expansion
+  NewValue:        String;             // New mandatory value
+  MyTerm:          String;             // obsolete
+  Actual:          tEntity;            // Current entity of the single
+  Generator:       tEntity;            // Generator of current entity
+  ATerm:           tSingle;            // Source single from the generator
+  Term:            tTerm;              // New language term
+  NewCateg:        tSynType;           // Synonym type for source single
 begin
 
   // Define the term category to search for
@@ -1797,7 +1794,6 @@ begin
           Self.Libelle := ATerm.Libelle;
           Self.Mandat := NewValue;
           Self.Option := ATerm.Option;
-          Self.Bracket := NewTerm;
           Self.BuildFrom := ATerm.BuildFrom;
           Self.Done := True;
           Self.Effective := ATerm.Effective;

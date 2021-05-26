@@ -33,12 +33,12 @@ const
   NbNounExGenderRU = 4;      // Number of exceptions for noun gender
   NbNounChGenderRU = 4;      // Number of tests for noun gender
 
-  NbNoChExpRU      = 14;     // Number of tests without expansion
+  NbNoChExpRU      = 12;     // Number of tests without expansion
   NbAdjChExpRU     = 3;      // Number of tests with adjective expansion
   NbAdjRuExpRU     = 7;      // Number of rules for adjective expansion
-  NbMandChExpRU    = 6;      // Number of tests with mandatory expansion
+  NbMandChExpRU    = 5;      // Number of tests with mandatory expansion
   NbLatChExpRU     = 7;      // Number of tests with lateral expansion
-  NbOptChExpRU     = 2;      // Number of tests with optional expansion
+  NbOptChExpRU     = 1;      // Number of tests with optional expansion
 
                    // Lateral values
   cRUSinister:     Array[ tLatType ] of String = (
@@ -434,7 +434,7 @@ const
 
                    // Exceptions for gender of adjectives
   cAdjExGenderRU:  tAdjExGenderRU = (
-                   ( 'общий', 'общяя', 'общее' ) );   // общий soft
+                   ( 'общий', 'общяя', 'общее' ) );   // общий
 
                    // Tests for gender of adjectives
   cAdjChGenderRU:  tAdjChGenderRU = (
@@ -448,8 +448,6 @@ const
 
                    // Test of terms without expansion
   cNoChExpRU:      tNoChExpRU = (
-                   ( 8295, 8295 ),     // вестибулоцит типа 1
-                   ( 8295, 27966 ),    // вестибулоциты типа 1
                    ( 7044, 7044 ),     // общее сухожильное кольцо
                    ( 7670, 7670 ),     // карликовый ганглиозный нейрон
                    ( 8129, 8129 ),     // латеральное лицо
@@ -463,41 +461,12 @@ const
                    ( 6274, 6274 ),     // короткие ассоциативные волокна
                    ( 0, 0 ) );
 
-                   // Test of adjective expansion
   cAdjChExpRU:     tAdjChExpRU = (
                    ( 7101, 7101 ),     // вестибулoулитковый орган
                    ( 4155, 4155 ),     // локтевая артерия
                    ( 0, 0 ) );
 
-                   // Test of mandatory expansion
-  cMandChExpRU:    tMandChExpRU = (
-                   ( 5142, 5142 ),     // спинномозговая часть терминальной нити
-                   ( 5973, 5973 ),     // извилины большого мозга
-                   ( 6085, 6085 ),     // лучистость мозолистого тела
-                   ( 12294, 12294 ),   // восходящий медиальный пучок передний
-                                       // мозга
-                   ( 13172, 13172 ),   // комиссуральный путь гиппокампа
-                   ( 0, 0 ) );
-
-                   // Test of lateral expansion
-  cLatChExpRU:     tLatChExpRU = (
-                   ( 8658, 38488 ),    // face supérolatérale du lobe frontal
-                                       // gauche
-                   ( 6017, 38443 ),    // lobe temporal droit
-                   ( 6085, 28635 ),    // radiation gauche du corps calleux
-                   ( 6317, 28935 ),    // cellules cholinergiques du bras
-                                       // vertical de la strie diagonale droite
-                   ( 13172, 32446 ),   // voies commissurales de l'hippocampe
-                                       // gauche
-                   ( 5885, 28074 ),    // fibres périventriculaires du thalamus
-                                       // droit
-                   ( 0, 0 ) );
-
-                   // Test of optional expansion
-  cOptChExpRU:     tOptChExpRU = (
-                   ( 7985, 7985 ),     // шейный сегмент спинномозгового мозга
-                   ( 0, 0 ) );
-
+                   // Test of adjective expansion
                    // First TID: st_mod; second TID: st_val
   {cAdjChExpRU:     tAdjChExpRU = (
                    ( 4155, 4155 ),     // локтевая артерия
@@ -516,7 +485,33 @@ const
                    ( '7986', 'NQI' ),  // segment cervical 1
                    ( '9511', 'NQPA' ), // faisceau frontal orbitopolaire
                    ( '6985', 'NQAA' ), // artériole rétinienne temporale sup.
-                   ( '8415', 'NOQ' ) );}// voie hypothalamospinale
+                   ( '8415', 'NOQ' ) );// voie hypothalamospinale
+
+                   // Test of mandatory expansion
+  cMandChExpRU:    tMandChExpRU = (
+                   ( 5973, 5973 ),     // извилины большого мозга
+                   ( 6085, 6085 ),     // radiation du corps calleux
+                   ( 12294, 12294 ),   // fas medial ascendant du prosencephalon
+                   ( 5142, 5142 ),     // partie spinale du fil terminal
+                   ( 13172, 13172 ) ); // voie commissurale de l'hippocampe
+
+                   // Test of lateral expansion
+  cLatChExpRU:     tLatChExpRU = (
+                   ( 38488, 38488 ),   // face supérolatérale du lobe frontal
+                                       // gauche
+                   ( 38443, 38443 ),   // lobe temporal droit
+                   ( 28635, 28635 ),   // radiation gauche du corps calleux
+                   ( 28935, 28935 ),   // cellules cholinergiques du bras
+                                       // vertical de la strie diagonale droite
+                   ( 32446, 32446 ),   // voies commissurales de l'hippocampe
+                                       // gauche
+                   ( 28074, 28074 ),   // fibres périventriculaires du thalamus
+                                       // droit
+                   ( 0, 0 ) );
+
+                   // Test of optional expansion
+  cOptChExpRU:     tOptChExpRU = (
+                   ( 7985, 7985 ) );}
 
                    // Binomes Latin-Russian
   cLARUEquiv:      tBinome = (
@@ -1875,10 +1870,6 @@ begin
   // Loop on all contributions of the formula (inverted order in Russian)
   MyFormula := Self.Formula;
   Indx := NbContrib - 1;
-  if IsInv then
-    Dec( Indx );
-  if IsCompl then
-    Dec( Indx );
   Self.NbWord := NbContrib;
   Shift := 0;
   IsLastPrefix := False;
@@ -1932,10 +1923,6 @@ begin
         begin
           LexEntity.Query := tSearch.Create( st_Nou );
           Shift := NbContrib - 1 - Indx;
-          if IsInv then
-            Dec( Shift );
-          if IsCompl then
-            Dec( Shift );
           MyCode := 'nxxnx';
           IsLastPrefix := False;
         end;
@@ -2042,7 +2029,6 @@ begin
       begin
         ANode := Self.Node[ Indx + Shift ];
         ANode.Lem := MySingle.Mandat;
-        ANode.Wrd := MySingle.Mandat;
         ANode.Cod := MyCode;
         Self.Node[ Indx + Shift ] := ANode;
       end else

@@ -2369,7 +2369,7 @@ begin
     begin
       Posit := Pos( CurSep, Line );
       MyTID := StrToInt( Copy( Line, 1, Posit - 1 ) );
-      if ( MyTID = 28823 ) then
+      if ( MyTID = 28827 ) then
         MyTID := MyTID;
       if ( MyTID <> PastTID ) then
         MyEntity := Self.GetEntityByTID( MyTID );

@@ -549,7 +549,7 @@ const
 
                    // Test of optional expansion
   cOptChExpFR:     tOptChExpFR = (
-                   ( 7985, 7985 ) );
+                   ( 7985, 7985 ) );   //
 
                    // Binomes Latin-French
   cLAFREquiv:      tBinome = (

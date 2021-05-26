@@ -3412,12 +3412,12 @@ type
   tTCN             = (
                    tcn_nul,            // nothing
                    tcn_sns,            // subctive, genitive, singular
-                   tcn_anp,            // adjestantive, nominative, singular
                    tcn_sgs,            // substantive, genitive, singular
                    tcn_snp,            // substantive, nominative, plural
                    tcn_sgp,            // substantive, genitive, plural
                    tcn_ans,            // adjective, nominative, singular
                    tcn_ags,            // adjective, nominative, plural
+                   tcn_anp,            // adjective, nominative, plural
                    tcn_agp,            // adjective, genitive, plural
                    tcn_cla );          // classis
 
@@ -4069,7 +4069,7 @@ type
     Cla:           String;
   end;
 
-                   // Record for FixTrad exceptions in Latin
+                   // Record for FixTrad
   FixTradRec       = record
     TID:           Integer;
     Pos:           Integer;

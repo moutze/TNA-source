@@ -12,7 +12,6 @@ uses
   Entity, TAHParam, ComCtrls, Stat, WList, SingleTerms;
 
 type
-                             // Forward declarations
   tListSection = class;
   tTA98ListItem = class;
 
@@ -8015,8 +8014,7 @@ begin
                 end;
                 Actual := TAH.GetEntityByTID( TID );
                 CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Official,
-                                             lt_Russian, st_bas, True, False );
-                TID := cNoChExpRU[ Indx, nu_plu ];
+                                             lt_Russian, st_mod, True, False );
                 Actual := TAH.GetEntityByTID( TID );
                 CheckGender[ Indx, va_1 ] := TAH.GetTextValue( TID, False,
                                              lt_Russian );
@@ -8025,67 +8023,17 @@ begin
               end;
             sc_TestAdjExp:
               begin
+                TID := cAdjChExpRU[ Indx, nu_sin ];
+                if ( TID = 0 ) then
+                begin
+                  Dec( NbTest );
+                  Continue;
+                end;
+                Actual := TAH.GetEntityByTID( TID );
+                CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Official,
+                                             lt_Russian, st_for, True, False );
+                CheckGender[ Indx, va_2 ] := IntToStr( TID );
                 TID := cAdjChExpRU[ Indx, nu_plu ];
-                if ( TID = 0 ) then
-                begin
-                  Dec( NbTest );
-                  Continue;
-                end;
-                Actual := TAH.GetEntityByTID( TID );
-                CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Official,
-                                             lt_Russian, st_for, True, False );
-                CheckGender[ Indx, va_2 ] := IntToStr( TID );
-                Actual := TAH.GetEntityByTID( TID );
-                CheckGender[ Indx, va_1 ] := TAH.GetTextValue( TID, False,
-                                             lt_Russian );
-                TID := TID;
-              end;
-            sc_TestMandExp:
-              begin
-                TID := cMandChExpRU[ Indx, nu_plu ];
-                if ( TID = 0 ) then
-                begin
-                  Dec( NbTest );
-                  Continue;
-                end;
-                Actual := TAH.GetEntityByTID( TID );
-                CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Official,
-                                             lt_Russian, st_for, True, False );
-                CheckGender[ Indx, va_2 ] := IntToStr( TID );
-                Actual := TAH.GetEntityByTID( TID );
-                CheckGender[ Indx, va_1 ] := TAH.GetTextValue( TID, False,
-                                             lt_Russian );
-                TID := TID;
-              end;
-            sc_TestLatExp:
-              begin
-                TID := cLatChExpRU[ Indx, nu_plu ];
-                if ( TID = 0 ) then
-                begin
-                  Dec( NbTest );
-                  Continue;
-                end;
-                Actual := TAH.GetEntityByTID( TID );
-                CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Official,
-                                             lt_Russian, st_for, True, False );
-                CheckGender[ Indx, va_2 ] := IntToStr( TID );
-                Actual := TAH.GetEntityByTID( TID );
-                CheckGender[ Indx, va_1 ] := TAH.GetTextValue( TID, False,
-                                             lt_Russian );
-                TID := TID;
-              end;
-            sc_TestOptExp:
-              begin
-                TID := cOptChExpRU[ Indx, nu_plu ];
-                if ( TID = 0 ) then
-                begin
-                  Dec( NbTest );
-                  Continue;
-                end;
-                Actual := TAH.GetEntityByTID( TID );
-                CheckGender[ Indx, va_word ] := Actual.GetLibelle( lb_Official,
-                                             lt_Russian, st_for, True, False );
-                CheckGender[ Indx, va_2 ] := IntToStr( TID );
                 Actual := TAH.GetEntityByTID( TID );
                 CheckGender[ Indx, va_1 ] := TAH.GetTextValue( TID, False,
                                              lt_Russian );
@@ -9241,6 +9189,8 @@ begin
 
     // 6. Display the results
     // ======================
+    if ( MyUID = '8360' ) then
+      MyUID := MyUID;
     AnItem := tBiColItem.Create;
     AnItem.SrcLabel := MyMasc;
     if ( SectionType = sc_FreeAdjExp ) then
@@ -21597,10 +21547,43 @@ begin
       end;  // case on all language
 
     // No expansion
-    sc_TestNoExp, sc_TestAdjExp, sc_TestMandExp, sc_TestOptExp, sc_TestLatExp:
+    sc_TestNoExp:
       begin
-        AnItem.SrcLabel := TAH.GetLabel( reTestSize, False );
-        AnItem.AltLabel := TAH.GetBubble( reTestSize, False );
+        AnItem.SrcLabel := 'Extension of the test';
+        AnItem.AltLabel := 'Number of pairs request - expected value ' +
+                           'submitted to the test';
+      end;
+
+    // Adjective expansion
+    sc_TestAdjExp:
+      begin
+        AnItem.SrcLabel := 'Extension of the test';
+        AnItem.AltLabel := 'Number of pairs request - expected value ' +
+                           'submitted to the test';
+      end;
+
+    // Mandatory expansion
+    sc_TestMandExp:
+      begin
+        AnItem.SrcLabel := 'Extension of the test';
+        AnItem.AltLabel := 'Number of pairs request - expected value ' +
+                           'submitted to the test';
+      end;
+
+    // Optional expansion
+    sc_TestOptExp:
+      begin
+        AnItem.SrcLabel := 'Extension of the test';
+        AnItem.AltLabel := 'Number of pairs request - expected value ' +
+                           'submitted to the test';
+      end;
+
+    // Lateral expansion
+    sc_TestLatExp:
+      begin
+        AnItem.SrcLabel := 'Extension of the test';
+        AnItem.AltLabel := 'Number of pairs request - expected value ' +
+                           'submitted to the test';
       end;
   end;
 end; // __________________________________________________________SetTestHeading
@@ -21709,5 +21692,4 @@ begin
                   TAH.GetLabel( reTestEntries, False );
   AddItem( AnItem );
 end; // __________________________________________________________SetFreeHeading
-
 end.

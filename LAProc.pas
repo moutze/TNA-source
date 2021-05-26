@@ -2760,7 +2760,6 @@ var
   Indx:            Integer;            // Index on all genitive words
   NbWordGS:        Integer;            // Number of genitive words
   Past:            Integer;            // Number of initial words
-  NbSingle:        Integer;            // Number of singles in generating entity
   MyGenitive:      String;             // Genitive text of the expansion
   MyLATerm:        tLatinTerm;         // Applicable term
 begin
@@ -2866,18 +2865,14 @@ var
   Indx:            Integer;
   NbWord:          Integer;
   NounPos:         Integer;
-  AdjPos:          Integer;
   NbShift:         Integer;
   NbPlus:          Integer;            // Number of words before the noun
   MyWord:          String;
   MyTerm:          String;
   SyntaxNoun:      String;
   MyGender:        String;
-  AGender:         tWordGender;
-  MyNode:          WordAnal;
   NewWord:         WordAnal;
   NewPref:         WordAnal;
-  MyMandat:        tLatinTerm;
   AdjCase:         tAdjCase;
 begin
 

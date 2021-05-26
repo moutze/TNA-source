@@ -1618,8 +1618,8 @@ begin
     MyUnit := TAH.GetUnitByPos( UID );
     if ( MyUnit <> nil ) then
     begin
-      if ( Self.FTip in [ tp_pair, tp_setpset, tp_pset, tp_set, tp_int,
-                          tp_mset ] ) then
+      if ( Self.fTip in [ tp_pair, tp_setpset, tp_pset, tp_set, tp_int,
+                          tp_mset, tp_leftpset, tp_rightpset ] ) then
         Result := MyUnit.Generator;
     end;
     Self.fGen := Result;
