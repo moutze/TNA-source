@@ -1,9 +1,5 @@
 ﻿{<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ unit TAHParam
-  * Basic constants and types for TAH *
-   ===================================
-  Description:
-  Most constants and types of TAH are defined in this unit, but references to
-  multilingual texts of the database are defined in the unit TAHInterface.</P>
+  * Basic constants, types and variables for TAH *
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
 unit TAHParam;
 
@@ -13,7 +9,7 @@ uses
   ComCtrls, TAHInterface;
 
 type
-  tDisLang         = ( en, fr ); // obsolete
+  tDisLang         = ( en, fr );
 
 const
                    // Single line signature for all pages.
@@ -193,23 +189,21 @@ const
   cUniversal       = '<img src=''../../../img/UniLogo.png''/>';
   cHeritage        = '<img src=''../../../img/ModLogo.png''/>';
 
-  NbPrefix         = 13;
-
                    // Error identifiers
-  erMissExp        = 14374;            // Missing exp
+  erMissExp        = 1;                // Missing exp
   erMissAdj        = 2;                // Missing adj
-  erMissGen        = 3;                // Missing gen
-  erMissBasGen     = 4;                // Missing bas gen
   erMissAdjUnit    = 5;                // Missing adj unit
   erMissAdjVoc     = 6;                // Missing adj voc
   erMissAdjSpec    = 7;                // Missing adj voc
+  erAdjLang        = 11;               // Language adjective procedure
   erMissPreUnit    = 8;                // Missing pre unit
   erMissPreVoc     = 9;                // Missing pre voc
   erMissPreSpec    = 10;               // Missing pre voc
-  erAdjLang        = 11;               // Language adjective procedure
   erMissMand       = 12;               // Missing mandatory expansion
+  erMissGen        = 3;                // Missing gen
+  erMissBasGen     = 4;                // Missing bas gen
 
-                   // Selected single characters
+                   { * Characters * }
   CurSep           = '¦';
   cBreak           = '|';
   cSpace           = ' ';
@@ -248,7 +242,7 @@ const
   cNBSP            = #160;     // No break space
   cUnderline       = '_';
   cPercent         = '%';      // Percentage sign
-  cArobas          = '@';      // Arobas sign
+  cArobas          = '@';      // Arobase sign
   cExclam          = '!';      // Exclamation mark
   cIrreg           = ' ';       // Irregular flag (= '!')
 
@@ -380,6 +374,8 @@ const
   cNewPar          = '<P>';
   cTaxonomic       = 'Taxonomic';
   cErr             = 'ERR';
+  cHTML            = 'html';
+  cHTM             = 'htm';
   cID              = 'id';
   cExpPref         = 'P';
   cExpAdj          = 'D';
@@ -387,25 +383,59 @@ const
   cExpOpt          = 'F';
   cPub             = 'Pub';
   c5L              = '5L';
-  cInvalidEntry    = 'Invalid entry';
-  cMissingWord     = 'Missing word';
-  cDeclension      = 'declension';
 
-                   // Name of division
-  cDivNameInf      = 'ChildInf';
-  cDivNameTax      = 'ChildTax';
-  cDivNamePart     = 'ChildPar';
-
-                   // Expansions of files
-  Expansion        = True;
-  HtmlExt          = 'htm';
-  XmlExt           = 'xml';
-  TextExt          = 'txt';
-  TATopPos         = 7973;
-  NoSelectionText  = 'no selection';
-  cEncoding        = '<?xml version="1.0" encoding="utf-8"?>';
-  cHTML            = 'html';
-  cHTM             = 'htm';
+                   // Translated words and terms by display language
+                   // English
+  cFullEN          = 'Full';
+  cShortEN         = 'Short';
+  cLinesEN         = 'lines';
+  cTopLevelEN      = 'Level 1';
+  cLevel2EN        = 'Level 2';
+  cLevel3EN        = 'Level 3';
+  cCurrLevelEN     = 'Current level';
+                   // French
+  cFullFR          = 'Entier';
+  cShortFR         = 'Abrégé';
+  cLinesFR         = 'lignes';
+  cTopLevelFR      = 'Niveau 1';
+  cLevel2FR        = 'Niveau 2';
+  cLevel3FR        = 'Niveau 3';
+  cCurrLevelFR     = 'Niveau courant';
+                   // Generic access
+  cFull:           array[ tDisLang ] of String =
+                   ( cFullEN, cFullFR );
+  cShort:          array[ tDisLang ] of String =
+                   ( cShortEN, cShortFR );
+  cLines:          array[ tDisLang ] of String =
+                   ( cLinesEN, cLinesFR );
+  cTopLevel:       array[ tDisLang ] of String =
+                   ( cTopLevelEN, cTopLevelFR );
+  cLevel2:         array[ tDisLang ] of String =
+                   ( cLevel2EN, cLevel2FR );
+  cLevel3:         array[ tDisLang ] of String =
+                   ( cLevel3EN, cLevel3FR );
+  cCurrLevel:      array[ tDisLang ] of String =
+                   ( cCurrLevelEN, cCurrLevelFR );
+                   // Bubbles for translated words and terms by display language
+                   // English
+  bbTopLevelEN     = 'Links to the lists at top level';
+  bbLevel2EN       = 'Links to the lists at level 2';
+  bbLevel3EN       = 'Link to the full list at level 3';
+  bbCurrLevelEN    = 'Current level, as actually presented on this page';
+                   // French
+  bbTopLevelFR     = 'Liens vers les listes au niveau supérieur';
+  bbLevel2FR       = 'Liens vers les listes au niveau 2';
+  bbLevel3FR       = 'Lien vers la liste entière au niveau 3';
+  bbCurrLevelFR    = 'Niveau courant, tel que présenté actuellement sur cette page';
+                   // Generic access
+  bbTopLevel:      array[ tDisLang ] of String =
+                   ( bbTopLevelEN, bbTopLevelFR );
+  bbLevel2:        array[ tDisLang ] of String =
+                   ( bbLevel2EN, bbLevel2FR );
+  bbLevel3:        array[ tDisLang ] of String =
+                   ( bbLevel3EN, bbLevel3FR );
+  bbCurrLevel:     array[ tDisLang ] of String =
+                   ( bbCurrLevelEN, bbCurrLevelFR );
 
                    // Translated words and terms by content language EN
                    // Latin
@@ -455,7 +485,22 @@ const
   bbShortOFFSPFR   = 'Terme officiel espagnol en forme courte équivalent du ' +
                      'terme latin officiel';
 
+                   // Name of division
+  cDivNameInf      = 'ChildInf';
+  cDivNameTax      = 'ChildTax';
+  cDivNamePart     = 'ChildPar';
+
+                   {  }
+  Expansion        = True;
+  HtmlExt          = 'htm';
+  XmlExt           = 'xml';
+  TextExt          = 'txt';
+  TATopPos         = 7973;
+  NoSelectionText  = 'no selection';
+  cEncoding        = '<?xml version="1.0" encoding="utf-8"?>';
+
                    // English
+  scNavListEN      = 'List navigation';
   scStatListEN     = 'List statistics';
   scLanguageITEN   = 'Italian terms';
   scLanguageGEEN   = 'German terms';
@@ -474,6 +519,7 @@ const
   scValidFormulaEN = 'Validation of universal formulas';
   scValidVocabEN   = 'Validation of multilingual vocabulary';
                    // French
+  scNavListFR      = 'Navigation intra liste';
   scStatListFR     = 'Statistiques de liste';
   scLanguageITFR   = 'Termes italiens';
   scLanguageGEFR   = 'Termes allemands';
@@ -492,6 +538,8 @@ const
   scValidFormulaFR = 'Validation des formules universelles';
   scValidVocabFR   = 'Validation du vocabulaire multilingue';
                    // Generic access
+  scNavList:       array[ tDisLang ] of String =
+                   ( scNavListEN, scNavListFR );
   scStatList:      array[ tDisLang ] of String =
                    ( scStatListEN, scStatListFR );
   scLanguageIT:    array[ tDisLang ] of String =
@@ -2741,8 +2789,8 @@ type
                    pw_QMemberPairOf,         // pair imm QMemberPairOf pset mat
 
                    pw_ImmPairSetOf,          // qset imm ImmPairSetOf mat
-                   pw_ImmPairSetPsetOf,      // qset imm ImmPairSetPsetOf pset mat
                    pw_ImmPairSetPairOf,      // qset imm ImmPairSetPairOf pair mat
+                   pw_ImmPairSetPsetOf,      // qset imm ImmPairSetPsetOf pset mat
 
                    // Immaterial from immaterial
                    pw_SpaceIn,               // imm SpaceIn imm
@@ -3374,125 +3422,10 @@ type
                    fa_gdcousin );       // grand-cousin (cousin of parent)
 
                    // Sexe attribute
-  tSexe            = (
+   tSexe           = (
                    sx_undef,            // Undefined sexe
                    sx_female,           // Female
                    sx_male );           // Male
-
-                   { Enumeration type for Latin word categories }
-  tWordCateg       = (
-                   wt_sub,                 // substantive
-                   wt_adj,                 // adjective
-                   wt_com,                 // comparative adjective
-                   wt_ord,                 // ordinal adjective
-                   wt_mod,                 // modal prefix
-                   wt_mor,                 // morpheme
-                   wt_ppr,                 // present participle
-                   wt_inv,                 // invariant acronym
-                   wt_hol,                 // main placeholder
-                   wt_sec );               // second placeholder
-
-                   { Enumeration type for Latin genders }
-  tWordGender      = (
-                   gd_mas,                 // masculine
-                   gd_fem,                 // feminine
-                   gd_neu );               // neutral
-
-                   { Enumeration type for Latin numbers }
-  tWordNumber      = (
-                   nb_sing,                // singular
-                   nb_plur );              // plural
-
-                   { Enumeration type for Latin cases }
-  tWordCase        = (
-                   wa_nom,                 // nominative
-                   wa_gen );               // genitive
-
-                   { * Enumeration type for code TCN: Type, Case, Number * }
-  tTCN             = (
-                   tcn_nul,            // nothing
-                   tcn_sns,            // subctive, genitive, singular
-                   tcn_sgs,            // substantive, genitive, singular
-                   tcn_snp,            // substantive, nominative, plural
-                   tcn_sgp,            // substantive, genitive, plural
-                   tcn_ans,            // adjective, nominative, singular
-                   tcn_ags,            // adjective, nominative, plural
-                   tcn_anp,            // adjective, nominative, plural
-                   tcn_agp,            // adjective, genitive, plural
-                   tcn_cla );          // classis
-
-                   { * Single row of transition matrix }
-  tTransit         = Array[ tTCN ] of Boolean;
-
-                   { * Transition matrix * }
-  tMatrix          = Array[ tTCN ] of tTransit;
-
-                   // 4 forms of a noun plus gender
-  tNounCase        = Array[ 1 .. 5 ] of String;
-
-                   // 12 forms of an adjective + LID
-  tAdjCase         = Array[ 1 .. 13 ] of String;
-
-                   { Array for storage of integers }
-  tListInt         = Array of Integer;
-
-                   // Array of four positions for lists
-  tFourList        = Array[ 1 .. 4 ] of Integer;      // P1, P2, P3, P4
-
-                   // Category of pages
-  tCategPage       = (
-                   ca_Undef,           // Undefined
-                   ca_Entity,          // Entity Page
-                   ca_Tetra,           // Tetra Page
-                   ca_Extended,        // Extended Page
-                   ca_Latin,           // Latin Page
-                   ca_Test,            // Test Page
-                   ca_Definition,      // Definition Page
-                   ca_Segment,         // Segment Page
-                   ca_Valid,           // Validation Page
-                   ca_Property,        // Property Page
-                   ca_Alpha,           // Alpha Page
-                   ca_ListPart,        // List Page: partonomic
-                   ca_ListTax,         // List Page: taxonomic
-                   ca_ListTA98,        // List Page: TA98 partonomic
-                   ca_listInt );       // Interface Page
-
-                   // Category of test for Test page
-  tTypeTest        = (
-                   te_Undef,           // Undefined
-                   te_NounGender,      // Test gender of nouns
-                   te_AdjGender,       // Test gender of adjectives
-                   te_NounPlural,      // Test plural of nouns
-                   te_AdjPlural,       // Test plural of adjectives
-                   te_NounGenSin,      // Test genitive singular of nouns
-                   te_AdjGenSin,       // Test genitive singular of adjs
-                   te_NounGenPlu,      // Test genitive plural of nouns
-                   te_AdjGenPlu,       // Test genitive plural of adjs
-                   te_NoExpansion,     // Test terms without expansion
-                   te_AdjExpansion,    // Test adjective expansion
-                   te_MandExpansion,   // Test mandatory expansion
-                   te_LatExpansion,    // Test lateral expansion
-                   te_OptExpansion,    // Test optional expansion
-                   te_AllExpansions ); // All expansiion tests
-
-                   // Combination of languages
-                   // Each value defines the applicable main, subsidiary and
-                   // display languages
-  tLgComb          = (
-                   cb_undef,           // undefined combination
-                   cb_LAENEN,          // Main Latin, sub English, dis English
-                   cb_LAFREN,          //
-                   cb_LAESEN,          //
-                   cb_LARUEN,          //
-                   cb_ENLAEN,          //
-                   cb_FRLAFR,          //
-                   cb_ESLAES,          //
-                   cb_RULARU,          //
-                   cb_FRENFR,          // Main French, sub English, dis French
-                   cb_ESENES,          //
-                   cb_RUENRU,          //
-                   cb_FRESFR,          // Main French, sub Spanish, dis French
-                   cb_FRRUFR );        // Main French, sub Russian, dis French
 
                    { * Storage of an analyzed words in a term *
                    Description:
@@ -3520,6 +3453,9 @@ type
     Cla:           String;
     Lem:           String;
   end;
+
+                   { Type for cells for term analysis }
+  tCells           = Array of WordAnal;
 
                    { * Storage of a single entry from the TAH MASTER file *
                    Description:
@@ -3749,6 +3685,8 @@ type
     Mandat:        String;
     Option:        String;
   end;
+                   { * Storage of a multiple terms for a single entity * }
+  tTermRec         = Array of TextRec;
 
                    { * Storage of FMA table optimized for processing *
                    Description:
@@ -3818,14 +3756,13 @@ type
                    Sub        Full Latin term
                    Cla        Class to which the present word belongs
                    </TABLE> }
-  xxxLatinRec         = record       // see LatinRec below !!
+  LatinRec         = record
     LID:           Integer;
     Cas:           String;
     Cod:           String;
     Sub:           String;
     Cla:           String;
   end;
-
                    { * Storage of sequence pointer *
                    Description:
                    The SEQ pointer file makes the many to one link between a
@@ -4026,64 +3963,45 @@ type
     Descr:         String;
   end;
 
-                   { * Storage of term file *
-                   Description:
-                   <TABLE>
-                   Field      Explanation
-                   ---------  --------------------------------------------------
-                   Cod        TA code
-                   TID        TID unique identifier of TA
-                   Ter        Base Latin term
-                   Exp        Expanded Latin term
-                   </TABLE> }
-  TermRec          = record
-    Cod:           String;
-    TID:           Integer;
-    Ter:           String;
-    Exp:           String;
-  end;
-
-                   { * Storage of Latin dictionary *
-                   Description:
-                   The Latin dictonary is issued from a separate database.
-                   The Latin dictionary is made of 7 entries per record, as
-                   described in the following table:
-                   <TABLE>
-                   Field      Explanation
-                   ---------  --------------------------------------------------
-                   LID        LID unique identifier of Latin dictionary
-                   Adj        (obsolete)
-                   Pre        (obsolete)
-                   Cas        Latin case in declension
-                   Cod        Code for type, declension, gender, case and number
-                   Sub        Full Latin term
-                   Cla        Class to which the present word belongs (obsolete)
-                   </TABLE> }
-  LatinRec         = record
-    LID:           Integer;
-    Adj:           Integer;
-    Pre:           Integer;
-    Cas:           String;
-    Cod:           String;
-    Sub:           String;
-    Cla:           String;
-  end;
-
-                   // Record for FixTrad
-  FixTradRec       = record
-    TID:           Integer;
-    Pos:           Integer;
-    Syntax:        String;
-  end;
-
-                   //
   tInquiries       = Array of InquiryRec;
 
-                   { Type for cells for term analysis }
-  tCells           = Array of WordAnal;
+                   // Array of four positions for lists
+  tFourList        = Array[ 1 .. 4 ] of Integer;      // P1, P2, P3, P4
 
-                   { * Storage of a multiple terms for a single entity * }
-  tTermRec         = Array of TextRec;
+                   // Category of pages
+  tCategPage       = (
+                   ca_Undef,           // Undefined
+                   ca_Entity,          // Entity Page
+                   ca_Tetra,           // Tetra Page
+                   ca_Extended,        // Extended Page
+                   ca_Latin,           // Latin Page
+                   ca_Test,            // Test Page
+                   ca_Definition,      // Definition Page
+                   ca_Segment,         // Segment Page
+                   ca_Valid,           // Validation Page
+                   ca_Property,        // Property Page
+                   ca_Alpha,           // Alpha Page
+                   ca_ListPart,        // List Page: partonomic
+                   ca_ListTax,         // List Page: taxonomic
+                   ca_ListTA98,        // List Page: TA98 partonomic
+                   ca_listInt );       // Interface Page
+
+                   // Category of test for Test page
+  tTypeTest        = (
+                   te_Undef,           // Undefined
+                   te_NounGender,      // Test gender of nouns
+                   te_AdjGender,       // Test gender of adjectives
+                   te_NounPlural,      // Test plural of nouns
+                   te_AdjPlural,       // Test plural of adjectives
+                   te_NounGenSin,      // Test genitive singular of nouns
+                   te_AdjGenSin,       // Test genitive singular of adjs
+                   te_NounGenPlu,      // Test genitive plural of nouns
+                   te_AdjGenPlu,       // Test genitive plural of adjs
+                   te_NoExpansion,     // Test terms without expansion
+                   te_AdjExpansion,    // Test adjective expansion
+                   te_MandExpansion,   // Test mandatory expansion
+                   te_LatExpansion,    // Test lateral expansion
+                   te_OptExpansion );  // Test optional expansion
 
 const
                    { Long text for languages in English.
@@ -5140,8 +5058,7 @@ const
                    'AdjExp',                 // Test adjective expansion
                    'MandExp',                // Test mandatory expansion
                    'LatExp',                 // Test lateral expansion
-                   'OptExp',                 // Test optional expansion
-                   'AllExp' );               // Test all expansions
+                   'OptExp' );               // Test optional expansion
 
                    // Lateral strings
   cLatString:      Array[ tLatType ] of String = (
@@ -5445,118 +5362,6 @@ const
                    '',                         // undefined
                    'F',                        // female
                    'M' );                      // male
-
-                   { Short description for word categories }
-  cWordShort:      Array[ tWordCateg ] of string = (
-                   'n',
-                   'a',
-                   'c',
-                   'o',
-                   'k',
-                   'm',
-                   'p',
-                   'i',
-                   'h',
-                   's' );
-
-                   { Long description for word categories }
-  cWordDescr:      Array[ tWordCateg ] of string = (
-                   'noun',
-                   'adjective',
-                   'comparative adjective',
-                   'ordinal adjective',
-                   'modal prefix',
-                   'prefix',
-                   'present participle',
-                   'invariant acronym',
-                   'main placeholder',
-                   'second placeholder' );
-
-                   { Link texts for word categories }
-  cLinkDescr:      Array[ tWordCateg ] of string = (
-                   'Cpl',
-                   'Adj',
-                   'Comp',
-                   'Ord',
-                   'Modal',
-                   'Morpho',
-                   'PPres',
-                   'Inv',
-                   'Holder',
-                   'MoreH' );
-
-                   { Short description for word gender }
-  cGenderShort:    Array[ tWordGender ] of String = (
-                   'm',
-                   'f',
-                   'n' );
-
-                   { Long description for word gender }
-  cGenderDescr:    Array[ tWordGender ] of String = (
-                   'masculine',
-                   'feminine',
-                   'neutral' );
-
-                   { Short description for word number }
-  cNumberShort:    Array[ tWordNumber ] of String = (
-                   's',
-                   'p' );
-
-                   { Long description for word number }
-  cNumberDescr:    Array[ tWordNumber ] of String = (
-                   'singular',
-                   'plural' );
-
-                   { Short description for word case }
-  cCaseShort:      Array[ tWordCase ] of String = (
-                   'n',
-                   'g' );
-
-                   { Long description for word case }
-  cCaseDescr:      Array[ tWordCase ] of String = (
-                   'nominative',
-                   'genitive' );
-
-                   { *  * }
-  cModalList:      Array[ 1 .. NbPrefix ] of String = (
-                   'sub', 'para', 'peri', 'pre', 'supra',
-                   'hemi', 'semi', 'post', 'epi', 'extra',
-                   'inter', 'intra', 'juxta' );
-
-                   { * Values for tripple word type - case - number * }
-  cTTCNValue:      Array[ tTCN ] of String = (
-                   'nul', 'nns', 'ngs', 'nnp', 'ngp',
-                   'ans', 'ags', 'anp', 'agp', 'cla' );
-
-                   // Lateral values
-  cLatSin:         Array[ tLatType ] of String = (
-                   '',                       // undefined value
-                   'sinister',               // left masc nom sing
-                   'sinistri',               // left masc gen sing
-                   'sinistri',               // left masc nom plur
-                   'sinistrorum',            // left masc gen plur
-                   'sinistra',               // left fem nom sing
-                   'sinistrae',              // left fem gen sing
-                   'sinistrae',              // left fem nom plur
-                   'sinistrarum',            // left fem gen plur
-                   'sinistrum',              // left neuter nom sing
-                   'sinistri',               // left neuter gen sing
-                   'sinistra',               // left neuter nom plur
-                   'sinistrorum' );          // left neuter gen plur
-  cLatDex:         Array[ tLatType ] of String = (
-                   '',                       // undefined value
-                   'dexter',                 // right masc nom sing
-                   'dextri',                 // right masc gen sing
-                   'dextri',                 // right masc nom plur
-                   'dextrorum',              // right masc gen plur
-                   'dextra',                 // right fem nom sing
-                   'dextrae',                // right fem gen sing
-                   'dextrae',                // right fem nom plur
-                   'dextrarum',              // right fem gen plur
-                   'dextrum',                // right neuter nom sing
-                   'dextri',                 // right neuter gen sing
-                   'dextra',                 // right neuter nom plur
-                   'dextrorum' );            // right neuter gen plur
 
 var
                    { Current working language. }
